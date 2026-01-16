@@ -30,7 +30,8 @@ import {
   Wand2,
   Crown,
   ShieldCheck,
-  Heart
+  Heart,
+  Instagram
 } from 'lucide-react';
 
 // --- TYPES ---
@@ -894,7 +895,7 @@ const Footer: React.FC = () => {
                   Criando memórias mágicas e momentos inesquecíveis para você e sua família. O melhor buffet infantil de Sorocaba e região.
                 </p>
                 <div className="flex gap-4">
-                  {[MessageCircle, ImagePlus, MapPin].map((Icon, i) => (
+                  {[MessageCircle, Instagram, MapPin].map((Icon, i) => (
                     <a key={i} href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-party-pink transition-colors group">
                       <Icon size={20} className="group-hover:animate-spin-slow" />
                     </a>
