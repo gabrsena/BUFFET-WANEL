@@ -609,6 +609,8 @@ const Hero: React.FC = () => {
                 <Wand2 className="animate-spin-slow" size={24} /> Ver Atrações
              </motion.a>
         </motion.div>
+
+     </motion.div>
     </section>
   );
 };
