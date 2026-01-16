@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, Variants } from 'framer-motion';
 import { 
   PartyPopper, 
   MessageCircle, 
@@ -31,7 +31,9 @@ import {
   Crown,
   ShieldCheck,
   Heart,
-  Instagram
+  Instagram,
+  Sparkles,
+  Lock
 } from 'lucide-react';
 
 // --- TYPES ---
@@ -124,7 +126,7 @@ const FloatingEmojis: React.FC = () => {
           initial={{ y: "110vh", x: Math.random() * 50 - 25 + "px", opacity: 0 }}
           animate={{ 
             y: "-20vh", 
-            opacity: [0, 0.8, 1, 0],
+            opacity: [0, 0.6, 0.8, 0], // Reduced opacity for better readability
             rotate: [0, 360],
             x: Math.random() * 100 - 50 + "px"
           }}
@@ -279,8 +281,25 @@ const RainbowText: React.FC<{ text: string, highlight?: string }> = ({ text, hig
   );
 };
 
-// 6. Crazy Animated Section Title
-const PartySectionTitle: React.FC<{ title: string, subtitle?: string }> = ({ title, subtitle }) => {
+// 6. Crazy Animated Section Title (With Glitch Option and Word Breaking Fix)
+const PartySectionTitle: React.FC<{ title: string, subtitle?: string, subtitleClassName?: string, glitch?: boolean }> = ({ title, subtitle, subtitleClassName, glitch = false }) => {
+  
+  // Glitch animation variants
+  const glitchVariants: Variants = {
+    normal: { skewX: 0, x: 0, opacity: 1 },
+    glitch: {
+      skewX: [0, 10, -10, 0],
+      x: [0, -2, 2, 0],
+      opacity: [1, 0.8, 1],
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+        repeat: Infinity,
+        repeatDelay: 4 + Math.random() * 4, // Random intermittent glitch
+      }
+    }
+  };
+
   return (
     <div className="text-center mb-16 md:mb-24 flex flex-col items-center px-4 relative z-20">
       <motion.div
@@ -299,27 +318,40 @@ const PartySectionTitle: React.FC<{ title: string, subtitle?: string }> = ({ tit
             
             <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
 
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-fredoka font-bold text-white leading-tight flex flex-wrap justify-center gap-x-2 drop-shadow-md">
-                {title.split("").map((char, index) => (
-                    <motion.span
-                        key={index}
-                        initial={{ y: 0, rotate: 0 }}
-                        animate={{ 
-                            y: [0, -5, 0],
-                            rotate: [0, 2, 0],
-                        }}
-                        transition={{
-                            duration: 3 + Math.random(),
-                            repeat: Infinity,
-                            delay: index * 0.1,
-                            ease: "easeInOut"
-                        }}
-                        className="inline-block"
-                    >
-                        {char === " " ? "\u00A0" : char}
-                    </motion.span>
+            <motion.h2 
+              className="text-3xl md:text-5xl lg:text-6xl font-fredoka font-bold text-white leading-tight flex flex-wrap justify-center gap-x-2 drop-shadow-md"
+              variants={glitch ? glitchVariants : {}}
+              animate={glitch ? "glitch" : "normal"}
+            >
+                {/* 
+                   Fix for Mobile Breaking: 
+                   Split by words first, wrap in inline-block span to keep word together. 
+                   Then animate characters inside.
+                */}
+                {title.split(" ").map((word, wIndex) => (
+                   <span key={wIndex} className="inline-block whitespace-nowrap">
+                      {word.split("").map((char, cIndex) => (
+                        <motion.span
+                            key={`${wIndex}-${cIndex}`}
+                            initial={{ y: 0, rotate: 0 }}
+                            animate={{ 
+                                y: [0, -5, 0],
+                                rotate: [0, 2, 0],
+                            }}
+                            transition={{
+                                duration: 3 + Math.random(),
+                                repeat: Infinity,
+                                delay: (wIndex + cIndex) * 0.1,
+                                ease: "easeInOut"
+                            }}
+                            className="inline-block"
+                        >
+                            {char}
+                        </motion.span>
+                      ))}
+                   </span>
                 ))}
-            </h2>
+            </motion.h2>
         </div>
       </motion.div>
 
@@ -332,7 +364,7 @@ const PartySectionTitle: React.FC<{ title: string, subtitle?: string }> = ({ tit
            className="relative mt-8"
         >
              <div className="absolute inset-0 bg-white/50 blur-xl rounded-full"></div>
-             <p className="relative text-lg md:text-xl text-gray-800 font-bold font-sora max-w-3xl mx-auto leading-relaxed bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-sm">
+             <p className={`relative text-lg md:text-xl max-w-3xl mx-auto leading-relaxed bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-sm ${subtitleClassName || "text-gray-800 font-sora font-bold"}`}>
                 {subtitle}
             </p>
         </motion.div>
@@ -536,6 +568,17 @@ const Hero: React.FC = () => {
   const yEmojisScroll = useTransform(scrollY, [0, 1000], [0, -100]);
   const yContentScroll = useTransform(scrollY, [0, 1000], [0, 200]);
 
+  // Colors for "confetti text" effect
+  const confettiColors = [
+    "text-party-purple",
+    "text-slate-600",
+    "text-party-pink",
+    "text-party-yellow",
+    "text-party-cyan",
+    "text-orange-500",
+    "text-slate-600",
+  ];
+
   return (
     <section 
       id="inicio" 
@@ -562,55 +605,101 @@ const Hero: React.FC = () => {
         style={{ y: yContentScroll, x: xContentSpring, translateY: yContentSpring }} 
         className="max-w-6xl mx-auto w-full flex flex-col items-center relative z-10 text-center"
       >
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="mb-10 max-w-5xl"
-        >
-             <RainbowText 
-                text="A Festa dos Sonhos" 
-                highlight="COMEÇA AQUI! 🚀"
-             />
+        <div className="bg-white/30 backdrop-blur-md border border-white/40 rounded-[2.5rem] p-6 md:p-12 shadow-2xl shadow-party-purple/10">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="mb-8 md:mb-10 max-w-5xl"
+            >
+                 <RainbowText 
+                    text="A Festa dos Sonhos" 
+                    highlight="COMEÇA AQUI! 🚀"
+                 />
 
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="mt-8 text-xl md:text-3xl text-gray-700 font-sora leading-relaxed font-medium max-w-3xl mx-auto"
-          >
-            Transformamos o aniversário do seu filho em uma <span className="font-bold text-party-pink underline decoration-wavy decoration-party-cyan decoration-2 underline-offset-4">experiência mágica</span> que vai ficar na memória para sempre.
-          </motion.p>
-        </motion.div>
+                <motion.div 
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.08,
+                      delayChildren: 0.5
+                    }
+                  }
+                }}
+                className="mt-6 md:mt-8 text-lg md:text-3xl font-fredoka leading-relaxed font-semibold max-w-3xl mx-auto drop-shadow-sm flex flex-wrap justify-center gap-x-2 md:gap-x-3 px-2"
+              >
+                {"Transformamos o aniversário do seu filho em uma".split(" ").map((word, i) => (
+                  <motion.span
+                    key={`start-${i}`}
+                    variants={{
+                      hidden: { opacity: 0, y: 20, scale: 0.8 },
+                      visible: { opacity: 1, y: 0, scale: 1 }
+                    }}
+                    transition={{ type: "spring", stiffness: 150, damping: 12 }}
+                    className={`inline-block ${confettiColors[i % confettiColors.length]}`}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
 
-        <motion.div 
-           initial={{ opacity: 0, scale: 0.9 }}
-           animate={{ opacity: 1, scale: 1 }}
-           transition={{ delay: 0.8, type: "spring" }}
-           className="flex flex-col sm:flex-row gap-6 justify-center w-full max-w-lg"
-        >
-             <motion.a 
-               href={WHATSAPP_LINK}
-               whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(147, 51, 234, 0.8)" }}
-               whileTap={{ scale: 0.95 }}
-               animate={{ scale: [1, 1.03, 1] }}
-               transition={{ scale: { duration: 2, repeat: Infinity, ease: "easeInOut" } }}
-               className="flex-1 py-5 px-8 bg-gradient-to-r from-party-purple to-party-pink text-white rounded-2xl font-bold text-xl shadow-neon-purple flex items-center justify-center gap-3 transition-all border-2 border-white/30"
-             >
-                <MessageCircle size={24} /> Fazer Orçamento
-             </motion.a>
-             <motion.a 
-                href="#atracoes"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex-1 py-5 px-8 bg-white text-party-purple border-4 border-party-purple rounded-2xl font-bold text-xl flex items-center justify-center gap-3 hover:bg-party-purple/5 shadow-md transition-all hover:shadow-neon-purple"
-             >
-                <Wand2 className="animate-spin-slow" size={24} /> Ver Atrações
-             </motion.a>
-        </motion.div>
+                <motion.span
+                   variants={{
+                      hidden: { opacity: 0, y: 20, scale: 0.8, rotate: -3 },
+                      visible: { opacity: 1, y: 0, scale: 1, rotate: 0 }
+                   }}
+                   transition={{ type: "spring", stiffness: 150, damping: 12 }}
+                   className="font-bold text-party-pink underline decoration-wavy decoration-party-cyan decoration-2 underline-offset-4 inline-block"
+                >
+                  experiência mágica
+                </motion.span>
 
-     </motion.div>
+                {"que vai ficar na memória para sempre.".split(" ").map((word, i) => (
+                  <motion.span
+                    key={`end-${i}`}
+                     variants={{
+                      hidden: { opacity: 0, y: 20, scale: 0.8 },
+                      visible: { opacity: 1, y: 0, scale: 1 }
+                    }}
+                    transition={{ type: "spring", stiffness: 150, damping: 12 }}
+                    className={`inline-block ${confettiColors[(i + 4) % confettiColors.length]}`}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            <motion.div 
+               initial={{ opacity: 0, scale: 0.9 }}
+               animate={{ opacity: 1, scale: 1 }}
+               transition={{ delay: 0.8, type: "spring" }}
+               className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center w-full max-w-lg mx-auto"
+            >
+                 <motion.a 
+                   href={WHATSAPP_LINK}
+                   whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(147, 51, 234, 0.8)" }}
+                   whileTap={{ scale: 0.95 }}
+                   animate={{ scale: [1, 1.03, 1] }}
+                   transition={{ scale: { duration: 2, repeat: Infinity, ease: "easeInOut" } }}
+                   className="flex-1 py-4 md:py-5 px-6 md:px-8 bg-gradient-to-r from-party-purple to-party-pink text-white rounded-2xl font-bold text-lg md:text-xl shadow-neon-purple flex items-center justify-center gap-3 transition-all border-2 border-white/30"
+                 >
+                    <MessageCircle size={24} /> Fazer Orçamento
+                 </motion.a>
+                 <motion.a 
+                    href="#atracoes"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex-1 py-4 md:py-5 px-6 md:px-8 bg-white/80 text-party-purple border-4 border-party-purple rounded-2xl font-bold text-lg md:text-xl flex items-center justify-center gap-3 hover:bg-party-purple/5 shadow-md transition-all hover:shadow-neon-purple backdrop-blur-sm"
+                 >
+                    <Wand2 className="animate-spin-slow" size={24} /> Ver Atrações
+                 </motion.a>
+            </motion.div>
+        </div>
+      </motion.div>
     </section>
   );
 };
@@ -624,7 +713,12 @@ const GastronomySection: React.FC = () => {
 
   return (
     <section id="cardapio" className="py-20 relative bg-white">
-       <PartySectionTitle title="Cardápio Delicioso" subtitle="Sabores que encantam crianças e adultos!" />
+       <PartySectionTitle 
+         title="Cardápio Delicioso" 
+         subtitle="Sabores que encantam crianças e adultos!" 
+         glitch={true}
+         subtitleClassName="font-fredoka text-transparent bg-clip-text bg-gradient-to-r from-party-purple via-party-pink to-party-yellow font-bold"
+       />
        
        <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
           {menuItems.map((item, index) => (
@@ -655,7 +749,11 @@ const GastronomySection: React.FC = () => {
 const AttractionsSection: React.FC = () => {
     return (
         <section id="atracoes" className="py-20 bg-slate-50 relative overflow-hidden">
-            <PartySectionTitle title="Atrações Incríveis" subtitle="Diversão garantida para todas as idades" />
+            <PartySectionTitle 
+              title="Atrações Incríveis" 
+              subtitle="Diversão garantida para todas as idades" 
+              subtitleClassName="font-fredoka text-transparent bg-clip-text bg-gradient-to-r from-party-cyan via-party-purple to-party-pink font-bold"
+            />
             
             <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                 {ATTRACTIONS_DATA.map((feature, index) => (
@@ -702,7 +800,11 @@ const AttractionsSection: React.FC = () => {
 const TestimonialsSection: React.FC = () => {
     return (
         <section id="depoimentos" className="py-20 bg-white relative">
-            <PartySectionTitle title="O Que Dizem" subtitle="A opinião de quem já viveu a experiência" />
+            <PartySectionTitle 
+              title="O Que Dizem" 
+              subtitle="A opinião de quem já viveu a experiência" 
+              subtitleClassName="font-fredoka text-gray-800 font-medium"
+            />
             
             <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
                 {TESTIMONIALS.map((t, i) => (
@@ -744,69 +846,73 @@ const TestimonialsSection: React.FC = () => {
 };
 
 const SafetySection: React.FC = () => {
-  return (
-    <section id="seguranca" className="py-20 bg-party-purple/5 relative">
-      <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center gap-12">
-        <motion.div 
-          initial={{ opacity: 0, x: -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          className="flex-1"
-        >
-          <div className="relative">
-             <div className="absolute inset-0 bg-party-purple blur-[60px] opacity-20 animate-pulse"></div>
-             <ShieldCheck size={300} className="text-party-purple opacity-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-             <h2 className="text-4xl md:text-5xl font-fredoka font-bold text-gray-800 mb-6 relative z-10">
-               Diversão com <br/>
-               <span className="text-party-purple">Segurança Total</span>
-             </h2>
-             <p className="text-lg text-gray-700 font-sora mb-6 relative z-10">
-               Sabemos que a segurança do seu filho é o mais importante. Por isso, contamos com:
-             </p>
-             <ul className="space-y-4 relative z-10">
-               {[
-                 "Monitores treinados e experientes",
-                 "Entrada e saída controladas",
-                 "Brinquedos com manutenção preventiva semanal",
-                 "Ambiente climatizado e higienizado"
-               ].map((item, i) => (
-                 <motion.li 
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className="flex items-center gap-3 text-gray-700 font-medium font-sora"
-                 >
-                   <motion.div 
-                     animate={{ scale: [1, 1.2, 1] }}
-                     transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
-                     className="w-6 h-6 rounded-full bg-party-green flex items-center justify-center shrink-0"
-                   >
-                     <Users size={14} className="text-white" />
-                   </motion.div>
-                   {item}
-                 </motion.li>
-               ))}
-             </ul>
-          </div>
-        </motion.div>
+  const safetyFeatures = [
+    {
+      icon: <Users size={32} />,
+      title: "Monitores Treinados",
+      desc: "Equipe capacitada para garantir a diversão com total atenção.",
+      color: "bg-party-purple",
+      border: "border-party-purple"
+    },
+    {
+      icon: <Lock size={32} />,
+      title: "Controle de Acesso",
+      desc: "Entrada e saída controladas eletronicamente para segurança.",
+      color: "bg-party-cyan",
+      border: "border-party-cyan"
+    },
+    {
+      icon: <Wand2 size={32} />,
+      title: "Brinquedos Certificados",
+      desc: "Manutenção preventiva semanal em todas as atrações.",
+      color: "bg-party-pink",
+      border: "border-party-pink"
+    },
+    {
+      icon: <Sparkles size={32} />,
+      title: "Higienização Total",
+      desc: "Limpeza constante antes, durante e após cada evento.",
+      color: "bg-party-yellow",
+      border: "border-party-yellow"
+    }
+  ];
 
-        <motion.div 
-           initial={{ opacity: 0, scale: 0.8 }}
-           whileInView={{ opacity: 1, scale: 1 }}
-           viewport={{ once: true }}
-           className="flex-1 flex justify-center"
-        >
-           <motion.div
-              animate={{ 
-                  y: [0, -15, 0],
-                  filter: ["drop-shadow(0 0 0px rgba(147, 51, 234, 0))", "drop-shadow(0 10px 20px rgba(147, 51, 234, 0.3))", "drop-shadow(0 0 0px rgba(147, 51, 234, 0))"]
-              }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-           >
-              <Accessibility size={200} className="text-party-purple" />
-           </motion.div>
-        </motion.div>
+  return (
+    <section id="seguranca" className="py-20 bg-slate-50 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-10 -left-10 w-60 h-60 bg-party-purple/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 -right-10 w-60 h-60 bg-party-cyan/5 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 relative z-10">
+        <PartySectionTitle 
+            title="Diversão com Segurança Total" 
+            subtitle="Cuidamos de tudo para você relaxar e aproveitar"
+            subtitleClassName="font-fredoka text-gray-700 font-medium"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {safetyFeatures.map((item, index) => (
+                <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ y: -8 }}
+                    className={`bg-white p-6 rounded-[2rem] border-2 ${item.border} hover:shadow-lg hover:shadow-${item.color}/20 transition-all group relative overflow-hidden`}
+                >
+                    <div className={`absolute -right-4 -top-4 w-24 h-24 ${item.color}/10 rounded-full group-hover:scale-150 transition-transform duration-500`}></div>
+                    
+                    <div className={`relative w-16 h-16 ${item.color}/10 rounded-2xl flex items-center justify-center ${item.color.replace('bg-', 'text-')} mb-4 group-hover:rotate-12 transition-transform duration-300`}>
+                        {item.icon}
+                    </div>
+                    <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-2 relative z-10">{item.title}</h3>
+                    <p className="font-sora text-sm text-gray-600 leading-relaxed relative z-10">{item.desc}</p>
+                </motion.div>
+            ))}
+        </div>
       </div>
     </section>
   );
@@ -815,7 +921,11 @@ const SafetySection: React.FC = () => {
 const LocationSection: React.FC = () => {
     return (
         <section id="localizacao" className="py-20 bg-party-cyan/5 relative">
-            <PartySectionTitle title="Nossa Localização" subtitle="Venha nos fazer uma visita!" />
+            <PartySectionTitle 
+              title="Nossa Localização" 
+              subtitle="Venha nos fazer uma visita!" 
+              subtitleClassName="font-fredoka text-gray-800 font-medium"
+            />
             
             <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-8 items-center">
                 <motion.div 
