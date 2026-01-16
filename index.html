@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Buffet Infantil 🎈 Festa Total</title>
+    <title>Buffet Infantil 🎈 Festa Total | O Melhor de Sorocaba</title>
+    <meta name="description" content="Realize a festa dos sonhos do seu filho! Buffet infantil completo em Sorocaba com brinquedão neon, área baby e gastronomia gourmet. Orçamento rápido via WhatsApp.">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -20,8 +22,23 @@
               fredoka: ['Fredoka', 'sans-serif'],
               sora: ['Sora', 'sans-serif'],
             },
-            backgroundImage: {
-              'confetti': "url('https://www.transparenttextures.com/patterns/confetti.png')",
+            boxShadow: {
+              'neon-purple': '0 0 20px rgba(147, 51, 234, 0.5)',
+              'neon-pink': '0 0 20px rgba(219, 39, 119, 0.5)',
+              'neon-cyan': '0 0 20px rgba(6, 182, 212, 0.5)',
+              'neon-yellow': '0 0 20px rgba(250, 204, 21, 0.5)',
+              'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+              'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'spin-slow': 'spin 3s linear infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              }
             }
           }
         }
@@ -43,6 +60,58 @@
   }
 }
 </script>
+    
+    <!-- Schema Markup (SEO LocalBusiness) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EventVenue",
+      "name": "Buffet Infantil Festa Total",
+      "image": "https://images.unsplash.com/photo-1516641396056-0ce60a85184e",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Av. Paulo Emanuel de Almeida, 123",
+        "addressLocality": "Sorocaba",
+        "addressRegion": "SP",
+        "postalCode": "18000-000",
+        "addressCountry": "BR"
+      },
+      "telephone": "+5515999999999",
+      "priceRange": "$$",
+      "description": "Buffet infantil premium com atrações tecnológicas, cardápio gourmet e decoração temática personalizada.",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "reviewCount": "124"
+      }
+    }
+    </script>
+
+    <style>
+      /* Hide Scrollbar globally while keeping functionality */
+      ::-webkit-scrollbar {
+        display: none;
+      }
+      html {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+        scroll-behavior: smooth;
+      }
+
+      /* Confetti Animation */
+      @keyframes fall {
+        0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+      }
+      .confetti-piece {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        top: -20px;
+        animation: fall linear infinite;
+        border-radius: 4px;
+      }
+    </style>
   </head>
   <body class="bg-slate-50 font-sora overflow-x-hidden selection:bg-party-pink selection:text-white">
     <div id="root"></div>
