@@ -534,7 +534,6 @@ const Hero: React.FC = () => {
   const yBlobsScroll = useTransform(scrollY, [0, 1000], [0, 400]);
   const yEmojisScroll = useTransform(scrollY, [0, 1000], [0, -100]);
   const yContentScroll = useTransform(scrollY, [0, 1000], [0, 200]);
-  const yBadgeScroll = useTransform(scrollY, [0, 1000], [0, -250]);
 
   return (
     <section 
@@ -563,8 +562,6 @@ const Hero: React.FC = () => {
         className="max-w-6xl mx-auto w-full flex flex-col items-center relative z-10 text-center"
       >
         
-        {/* ROTATING BADGE REMOVED AS REQUESTED */}
-
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
