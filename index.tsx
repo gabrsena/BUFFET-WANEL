@@ -403,10 +403,11 @@ const Header: React.FC = () => {
       'text-party-pink hover:text-party-cyan', 
       'text-party-cyan hover:text-party-yellow', 
       'text-party-yellow hover:text-party-purple',
-      'text-party-purple hover:text-party-pink'
+      'text-party-purple hover:text-party-pink',
+      'text-party-cyan hover:text-party-yellow',
   ];
 
-  const menuItems = ["Início", "Atrações", "Cardápio", "Segurança", "Depoimentos"];
+  const menuItems = ["Início", "Atrações", "Cardápio", "Segurança", "Depoimentos", "Localização"];
 
   return (
     <motion.nav 
@@ -561,27 +562,8 @@ const Hero: React.FC = () => {
         style={{ y: yContentScroll, x: xContentSpring, translateY: yContentSpring }} 
         className="max-w-6xl mx-auto w-full flex flex-col items-center relative z-10 text-center"
       >
-        <motion.div 
-          style={{ y: yBadgeScroll }}
-          animate={{ rotate: 360, scale: [1, 1.1, 1] }}
-          transition={{ 
-              rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-              scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-          }}
-          className="mb-8 relative w-32 h-32 md:w-48 md:h-48 flex items-center justify-center"
-        >
-          <svg viewBox="0 0 100 100" className="w-full h-full fill-current text-party-purple opacity-40 absolute">
-             <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" />
-             <text className="font-bold tracking-widest text-[11px] fill-party-pink">
-               <textPath href="#circlePath" startOffset="50%" textAnchor="middle">
-                 ★ BUFFET INFANTIL PREMIUM ★ SOROCABA
-               </textPath>
-             </text>
-          </svg>
-          <div className="absolute inset-0 flex items-center justify-center">
-             <span className="text-6xl md:text-8xl drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] filter">🎂</span>
-          </div>
-        </motion.div>
+        
+        {/* ROTATING BADGE REMOVED AS REQUESTED */}
 
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -831,6 +813,76 @@ const SafetySection: React.FC = () => {
   );
 };
 
+const LocationSection: React.FC = () => {
+    return (
+        <section id="localizacao" className="py-20 bg-party-cyan/5 relative">
+            <PartySectionTitle title="Nossa Localização" subtitle="Venha nos fazer uma visita!" />
+            
+            <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-8 items-center">
+                <motion.div 
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    className="flex-1 space-y-6"
+                >
+                    <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
+                        <h3 className="text-2xl font-fredoka font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <MapPin className="text-party-purple" /> Endereço
+                        </h3>
+                        <p className="text-gray-600 font-sora text-lg leading-relaxed mb-6">
+                            Av. Elias Maluf, 0000<br/>
+                            Wanel Ville, Sorocaba - SP<br/>
+                            CEP: 18000-000
+                        </p>
+                        <a 
+                            href="https://maps.google.com" 
+                            target="_blank" 
+                            className="inline-flex items-center gap-2 text-party-purple font-bold hover:text-party-pink transition-colors"
+                        >
+                            Ver no Google Maps <ArrowRight size={18} />
+                        </a>
+                    </div>
+
+                    <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
+                        <h3 className="text-2xl font-fredoka font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <CalendarClock className="text-party-pink" /> Horário de Atendimento
+                        </h3>
+                         <ul className="space-y-2 text-gray-600 font-sora">
+                            <li className="flex justify-between">
+                                <span>Segunda:</span> <span className="font-bold">Fechado</span>
+                            </li>
+                            <li className="flex justify-between">
+                                <span>Terça a Sexta:</span> <span className="font-bold">13h às 22h</span>
+                            </li>
+                             <li className="flex justify-between">
+                                <span>Sábado e Domingo:</span> <span className="font-bold">10h às 22h</span>
+                            </li>
+                        </ul>
+                    </div>
+                </motion.div>
+
+                <motion.div 
+                     initial={{ opacity: 0, scale: 0.9 }}
+                     whileInView={{ opacity: 1, scale: 1 }}
+                     viewport={{ once: true }}
+                     className="flex-1 w-full h-[450px] bg-gray-200 rounded-[2rem] overflow-hidden shadow-xl border-4 border-white"
+                >
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.0254648900777!2d-47.49578962386128!3d-23.49559255918092!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c58a640161491f%3A0x1338d82d499385b7!2sWanel%20Ville%2C%20Sorocaba%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1709230538964!5m2!1spt-BR!2sbr" 
+                        width="100%" 
+                        height="100%" 
+                        style={{ border: 0 }} 
+                        allowFullScreen={true} 
+                        loading="lazy" 
+                        referrerPolicy="no-referrer-when-downgrade"
+                        className="w-full h-full grayscale hover:grayscale-0 transition-all duration-500"
+                    ></iframe>
+                </motion.div>
+            </div>
+        </section>
+    );
+};
+
 const Footer: React.FC = () => {
   return (
     <footer className="bg-slate-900 text-white pt-20 pb-10 relative overflow-hidden">
@@ -909,6 +961,7 @@ const App: React.FC = () => {
             <GastronomySection />
             <SafetySection />
             <TestimonialsSection />
+            <LocationSection />
          </div>
       </div>
 
