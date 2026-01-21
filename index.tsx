@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, Variants } from 'framer-motion';
@@ -66,7 +67,7 @@ const TESTIMONIALS: TestimonialProps[] = [
   {
     name: "Marcos",
     role: "Pai de 2",
-    content: "Buffet nota 10 no Wanel Ville. Comida farta e quentinha. Super recomendo para quem quer tranquilidade e diversão.",
+    content: "Buffet nota 10 no Wanel Ville. Comida farta e quentinha. Super recoendo para quem quer tranquilidade e diversão.",
     stars: 5
   },
   {
@@ -89,7 +90,7 @@ const ATTRACTIONS_DATA: FeatureProps[] = [
   {
     icon: <Baby size={40} />,
     title: "Área Baby",
-    description: "Um espaço lúdico e protegido, projetado especialmente para os pequenos exploradores brincarem com total tranquilidade.",
+    description: "Um espaço lúdico e protegido, projetado especialmente para os pequenos exploradores brilharem com total tranquilidade.",
     color: "bg-party-pink",
     glow: "shadow-neon-pink",
     borderColor: "border-party-pink"
@@ -106,40 +107,52 @@ const ATTRACTIONS_DATA: FeatureProps[] = [
 
 // --- INTERNAL COMPONENTS ---
 
-// 1. High Density Floating Emojis Background (Hero)
-const FloatingEmojis: React.FC = () => {
-  const emojis = ["🎈", "✨", "🎂", "🦄", "🎨", "🎮", "🚀", "🍭", "🦸", "👑", "🦁", "🎪", "🍦", "🎁"];
-  const items = Array.from({ length: 80 }).map((_, i) => ({
-    id: i,
-    emoji: emojis[i % emojis.length],
-    left: `${Math.random() * 100}vw`,
-    delay: Math.random() * 5,
-    duration: Math.random() * 10 + 10,
-    size: Math.random() * 2 + 1 + "rem"
-  }));
-  
+// 0. Horizontal Moving Clouds Component - Refined for Ethereal feel
+const MovingClouds: React.FC<{ zIndex: number, count?: number, speedMultiplier?: number }> = ({ zIndex, count = 5, speedMultiplier = 1 }) => {
+  const clouds = Array.from({ length: count }).map((_, i) => {
+    const isDense = Math.random() > 0.75;
+    const isVerySlow = Math.random() > 0.8;
+    return {
+      id: i,
+      top: `${Math.random() * 95}%`,
+      delay: Math.random() * 40,
+      duration: ((Math.random() * 40 + 40) / (isVerySlow ? 0.5 : 1)) / speedMultiplier,
+      size: isDense ? Math.random() * 160 + 120 : Math.random() * 100 + 70,
+      opacity: isDense ? Math.random() * 0.3 + 0.35 : Math.random() * 0.15 + 0.05,
+      blur: isDense ? 'blur-[2px]' : 'blur-[5px]',
+      yAmplitude: Math.random() * 30 + 10,
+      floatDelay: Math.random() * 5
+    };
+  });
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 max-w-[100vw]">
-      {items.map((item) => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex }}>
+      {clouds.map((cloud) => (
         <motion.div
-          key={item.id}
-          initial={{ y: "110vh", x: Math.random() * 50 - 25 + "px", opacity: 0 }}
+          key={cloud.id}
+          initial={{ x: "-40vw", opacity: 0 }}
           animate={{ 
-            y: "-20vh", 
-            opacity: [0, 0.6, 0.8, 0], // Reduced opacity for better readability
-            rotate: [0, 360],
-            x: Math.random() * 100 - 50 + "px"
+            x: "120vw", 
+            opacity: [0, cloud.opacity, cloud.opacity, 0],
+            y: [0, cloud.yAmplitude, -cloud.yAmplitude, 0],
+            scale: [1, 1.05, 0.95, 1]
           }}
-          transition={{ 
-            duration: item.duration, 
-            repeat: Infinity, 
-            delay: item.delay,
-            ease: "linear"
+          transition={{
+            x: { duration: cloud.duration, repeat: Infinity, delay: cloud.delay, ease: "linear" },
+            opacity: { duration: cloud.duration, repeat: Infinity, delay: cloud.delay, times: [0, 0.2, 0.8, 1], ease: "linear" },
+            y: { duration: 10 + Math.random() * 10, repeat: Infinity, ease: "easeInOut", delay: cloud.floatDelay },
+            scale: { duration: 15 + Math.random() * 10, repeat: Infinity, ease: "easeInOut", delay: cloud.floatDelay }
           }}
-          style={{ left: item.left, fontSize: item.size }}
-          className="absolute filter blur-[0.5px] hover:blur-0 transition-all"
+          style={{ 
+            position: 'absolute', 
+            top: cloud.top,
+          }}
         >
-          {item.emoji}
+          <Cloud 
+            size={cloud.size} 
+            className={`text-white fill-white filter drop-shadow-sm ${cloud.blur}`} 
+            style={{ opacity: 1 }} // Controlled by parent motion.div
+          />
         </motion.div>
       ))}
     </div>
@@ -149,12 +162,11 @@ const FloatingEmojis: React.FC = () => {
 // 2. Global Balloons (Parallax Effect)
 const GlobalBalloons: React.FC = () => {
   const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], [0, -500]); 
   
   const balloons = Array.from({ length: 15 }).map((_, i) => ({
     id: i,
     left: `${Math.random() * 90 + 5}vw`,
-    color: i % 3 === 0 ? '#9333ea' : i % 3 === 1 ? '#db2777' : '#06b6d4',
+    color: i % 3 === 0 ? '#9333ea' : i % 3 === 1 ? '#f97316' : '#a5f3fc',
     size: Math.random() * 40 + 30,
     top: `${Math.random() * 100}vh`,
     speed: Math.random() * 0.5 + 0.2
@@ -191,10 +203,10 @@ const GlobalBalloons: React.FC = () => {
   );
 };
 
-// 4. Confetti Component (Continuous Loop with Framer Motion)
+// 4. Confetti Component
 const ContinuousConfetti: React.FC = () => {
-  const pieces = Array.from({ length: 40 }); // Reduced count for better performance over long section
-  const colors = ['#9333ea', '#db2777', '#facc15', '#06b6d4', '#ffffff'];
+  const pieces = Array.from({ length: 40 });
+  const colors = ['#9333ea', '#db2777', '#facc15', '#a5f3fc', '#ffffff'];
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-30 h-full">
@@ -209,7 +221,7 @@ const ContinuousConfetti: React.FC = () => {
             x: [0, Math.random() * 40 - 20, 0]
           }}
           transition={{ 
-            duration: Math.random() * 15 + 10, // Slower fall for long sections
+            duration: Math.random() * 15 + 10,
             repeat: Infinity, 
             ease: "linear",
             delay: Math.random() * 20
@@ -228,63 +240,8 @@ const ContinuousConfetti: React.FC = () => {
   );
 };
 
-// 5. Rainbow Character Animation Component
-const RainbowText: React.FC<{ text: string, highlight?: string }> = ({ text, highlight }) => {
-  const colors = ["text-party-purple", "text-party-pink", "text-party-yellow", "text-party-cyan"];
-  
-  return (
-    <div className="text-4xl md:text-8xl font-fredoka font-extrabold leading-tight drop-shadow-sm break-words tracking-tight">
-      <div className="inline-block">
-        {text.split("").map((char, i) => (
-          <motion.span
-            key={i}
-            className={`inline-block ${colors[i % colors.length]}`}
-            initial={{ y: 0 }}
-            animate={{ 
-              y: [0, -8, 0],
-              scale: [1, 1.1, 1]
-            }}
-            transition={{ 
-              duration: 2, 
-              repeat: Infinity, 
-              delay: i * 0.05,
-              ease: "easeInOut" 
-            }}
-          >
-            {char === " " ? "\u00A0" : char}
-          </motion.span>
-        ))}
-      </div>
-      
-      {highlight && (
-        <motion.div 
-          className="block mt-6 text-transparent bg-clip-text bg-gradient-to-r from-party-pink via-party-purple to-party-cyan pb-2"
-          animate={{ 
-            scale: [1, 1.05, 1],
-            filter: [
-              "drop-shadow(0 0 0px rgba(219,39,119,0))", 
-              "drop-shadow(0 0 20px rgba(219,39,119,0.5))", 
-              "drop-shadow(0 0 0px rgba(219,39,119,0))"
-            ]
-          }}
-          transition={{ 
-            duration: 1.5, 
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          style={{ backgroundSize: "200%" }}
-        >
-          {highlight}
-        </motion.div>
-      )}
-    </div>
-  );
-};
-
-// 6. Crazy Animated Section Title (With Glitch Option and Word Breaking Fix)
+// 6. Section Title
 const PartySectionTitle: React.FC<{ title: string, subtitle?: string, subtitleClassName?: string, glitch?: boolean }> = ({ title, subtitle, subtitleClassName, glitch = false }) => {
-  
-  // Glitch animation variants
   const glitchVariants: Variants = {
     normal: { skewX: 0, x: 0, opacity: 1 },
     glitch: {
@@ -295,7 +252,7 @@ const PartySectionTitle: React.FC<{ title: string, subtitle?: string, subtitleCl
         duration: 0.3,
         ease: "easeInOut",
         repeat: Infinity,
-        repeatDelay: 4 + Math.random() * 4, // Random intermittent glitch
+        repeatDelay: 4 + Math.random() * 4,
       }
     }
   };
@@ -309,25 +266,16 @@ const PartySectionTitle: React.FC<{ title: string, subtitle?: string, subtitleCl
         transition={{ type: "spring", bounce: 0.6 }}
         className="relative"
       >
-        {/* Flashy Background */}
         <div className="absolute -inset-4 bg-gradient-to-r from-party-purple via-party-pink to-party-yellow opacity-100 rounded-[2rem] blur-lg animate-pulse"></div>
         <div className="absolute -inset-1 bg-gradient-to-r from-party-cyan via-party-purple to-party-pink rounded-[2rem] opacity-70 blur-md"></div>
         
-        {/* Title Container */}
-        <div className="relative bg-gradient-to-br from-party-purple via-party-pink to-party-cyan px-8 py-4 md:px-14 md:py-6 rounded-[2rem] shadow-[0_0_50px_rgba(219,39,119,0.6)] border-4 border-white/30 overflow-hidden group">
-            
+        <div className="relative bg-gradient-to-br from-party-purple via-party-pink to-party-cyan px-8 py-4 md:px-14 md:py-6 rounded-[2rem] shadow-[0_0_50px_rgba(147,51,234,0.4)] border-4 border-white/30 overflow-hidden group">
             <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
-
             <motion.h2 
               className="text-3xl md:text-5xl lg:text-6xl font-fredoka font-bold text-white leading-tight flex flex-wrap justify-center gap-x-2 drop-shadow-md"
               variants={glitch ? glitchVariants : {}}
               animate={glitch ? "glitch" : "normal"}
             >
-                {/* 
-                   Fix for Mobile Breaking: 
-                   Split by words first, wrap in inline-block span to keep word together. 
-                   Then animate characters inside.
-                */}
                 {title.split(" ").map((word, wIndex) => (
                    <span key={wIndex} className="inline-block whitespace-nowrap">
                       {word.split("").map((char, cIndex) => (
@@ -397,7 +345,7 @@ const WhatsAppButton: React.FC = () => {
             animate={{ 
                 opacity: 1, 
                 y: 0, 
-                scale: [1, 1.05, 1], // Breathing effect
+                scale: [1, 1.05, 1],
             }}
             transition={{
                 scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
@@ -433,8 +381,8 @@ const Header: React.FC = () => {
 
   const navColors = [
       'text-party-purple hover:text-party-pink', 
-      'text-party-pink hover:text-party-cyan', 
-      'text-party-cyan hover:text-party-yellow', 
+      'text-party-orange hover:text-party-pink', 
+      'text-party-cyan hover:text-party-orange', 
       'text-party-yellow hover:text-party-purple',
       'text-party-purple hover:text-party-pink',
       'text-party-cyan hover:text-party-yellow',
@@ -458,7 +406,6 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="flex justify-between items-center w-full">
           <div className="flex items-center gap-2 group cursor-pointer z-50">
-           {/* Logo Space */}
           </div>
           
           <div className="hidden md:flex items-center space-x-8 font-fredoka font-bold text-lg">
@@ -471,26 +418,6 @@ const Header: React.FC = () => {
                 {item}
               </a>
             ))}
-          </div>
-
-          <div className="hidden md:block">
-            <motion.a
-              href={WHATSAPP_LINK}
-              target="_blank"
-              whileHover={{ scale: 1.05, boxShadow: "0 0 35px rgba(219, 39, 119, 0.9)" }}
-              whileTap={{ scale: 0.95 }}
-              animate={{ 
-                boxShadow: ["0 0 0px rgba(219, 39, 119, 0)", "0 0 25px rgba(219, 39, 119, 0.6)", "0 0 0px rgba(219, 39, 119, 0)"],
-                scale: [1, 1.02, 1]
-              }}
-              transition={{ 
-                  boxShadow: { duration: 1.5, repeat: Infinity },
-                  scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-              }}
-              className="bg-gradient-to-r from-party-pink via-party-purple to-party-cyan text-white px-8 py-2 rounded-full font-fredoka font-bold shadow-xl border-2 border-white/50 flex items-center gap-2"
-            >
-              Garantir Minha Data <Rocket size={20} className="animate-bounce" />
-            </motion.a>
           </div>
 
           <button 
@@ -521,16 +448,6 @@ const Header: React.FC = () => {
                     {item}
                   </motion.a>
                 ))}
-                 <motion.a
-                  initial={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  href={WHATSAPP_LINK}
-                  target="_blank"
-                  className="mt-4 w-full bg-gradient-to-r from-party-pink to-party-purple text-white py-4 rounded-xl font-fredoka font-bold shadow-neon-pink text-center flex items-center justify-center gap-2"
-                >
-                   Garantir Minha Data <Rocket size={20} className="animate-bounce" />
-                </motion.a>
               </motion.div>
             )}
           </AnimatePresence>
@@ -565,19 +482,7 @@ const Hero: React.FC = () => {
   const yBlobsSpring = useSpring(yBlobsMouse, springConfig);
 
   const yBlobsScroll = useTransform(scrollY, [0, 1000], [0, 400]);
-  const yEmojisScroll = useTransform(scrollY, [0, 1000], [0, -100]);
   const yContentScroll = useTransform(scrollY, [0, 1000], [0, 200]);
-
-  // Colors for "confetti text" effect
-  const confettiColors = [
-    "text-party-purple",
-    "text-slate-600",
-    "text-party-pink",
-    "text-party-yellow",
-    "text-party-cyan",
-    "text-orange-500",
-    "text-slate-600",
-  ];
 
   return (
     <section 
@@ -589,103 +494,50 @@ const Hero: React.FC = () => {
         style={{ y: yBlobsScroll, x: xBlobsSpring, translateY: yBlobsSpring }} 
         className="absolute inset-0 z-0"
       >
-        <div className="absolute top-20 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-party-yellow/30 rounded-full blur-[60px] md:blur-[80px] animate-pulse mix-blend-multiply" />
-        <div className="absolute bottom-0 left-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-party-cyan/30 rounded-full blur-[60px] md:blur-[100px] animate-float mix-blend-multiply" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-party-pink/20 rounded-full blur-[100px]" />
+        <div className="absolute top-20 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-party-orange/10 rounded-full blur-[60px] md:blur-[80px] animate-pulse mix-blend-multiply" />
+        <div className="absolute bottom-0 left-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-party-yellow/20 rounded-full blur-[60px] md:blur-[100px] animate-float mix-blend-multiply" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-party-cyan/30 rounded-full blur-[100px]" />
       </motion.div>
       
-      <motion.div 
-        style={{ y: yEmojisScroll }} 
-        className="absolute inset-0 z-1 pointer-events-none"
-      >
-         <FloatingEmojis />
-      </motion.div>
+      {/* Background Clouds (Behind Mascot) - Dense & Ethereal setup */}
+      <MovingClouds zIndex={5} count={40} speedMultiplier={0.7} />
 
       <motion.div 
         style={{ y: yContentScroll, x: xContentSpring, translateY: yContentSpring }} 
         className="max-w-6xl mx-auto w-full flex flex-col items-center relative z-10 text-center"
       >
-        <div className="bg-white/30 backdrop-blur-md border border-white/40 rounded-[2.5rem] p-6 md:p-12 shadow-2xl shadow-party-purple/10">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+        <div className="flex flex-col items-center relative w-full">
+            
+            {/* Foreground Clouds (In front of Mascot) - Dense & Ethereal setup */}
+            <MovingClouds zIndex={30} count={30} speedMultiplier={1.5} />
+
+            {/* Hero Image - Optimized for focus, moved up on Desktop to reveal buttons */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="mb-8 md:mb-10 max-w-5xl"
+              className="w-full flex justify-center mb-8 md:mb-2 md:-mt-32 relative z-20"
             >
-                 <RainbowText 
-                    text="A Festa dos Sonhos" 
-                    highlight="COMEÇA AQUI! 🚀"
-                 />
-
-                <motion.div 
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: {
-                      staggerChildren: 0.08,
-                      delayChildren: 0.5
-                    }
-                  }
-                }}
-                className="mt-6 md:mt-8 text-lg md:text-3xl font-fredoka leading-relaxed font-semibold max-w-3xl mx-auto drop-shadow-sm flex flex-wrap justify-center gap-x-2 md:gap-x-3 px-2"
-              >
-                {"Transformamos o aniversário do seu filho em uma".split(" ").map((word, i) => (
-                  <motion.span
-                    key={`start-${i}`}
-                    variants={{
-                      hidden: { opacity: 0, y: 20, scale: 0.8 },
-                      visible: { opacity: 1, y: 0, scale: 1 }
-                    }}
-                    transition={{ type: "spring", stiffness: 150, damping: 12 }}
-                    className={`inline-block ${confettiColors[i % confettiColors.length]}`}
-                  >
-                    {word}
-                  </motion.span>
-                ))}
-
-                <motion.span
-                   variants={{
-                      hidden: { opacity: 0, y: 20, scale: 0.8, rotate: -3 },
-                      visible: { opacity: 1, y: 0, scale: 1, rotate: 0 }
-                   }}
-                   transition={{ type: "spring", stiffness: 150, damping: 12 }}
-                   className="font-bold text-party-pink underline decoration-wavy decoration-party-cyan decoration-2 underline-offset-4 inline-block"
-                >
-                  experiência mágica
-                </motion.span>
-
-                {"que vai ficar na memória para sempre.".split(" ").map((word, i) => (
-                  <motion.span
-                    key={`end-${i}`}
-                     variants={{
-                      hidden: { opacity: 0, y: 20, scale: 0.8 },
-                      visible: { opacity: 1, y: 0, scale: 1 }
-                    }}
-                    transition={{ type: "spring", stiffness: 150, damping: 12 }}
-                    className={`inline-block ${confettiColors[(i + 4) % confettiColors.length]}`}
-                  >
-                    {word}
-                  </motion.span>
-                ))}
-              </motion.div>
+              <img 
+                src="https://i.imgur.com/i1z4W2C.png" 
+                alt="Mascote Ateliê Kids" 
+                className="w-[90%] h-auto drop-shadow-2xl"
+              />
             </motion.div>
 
             <motion.div 
                initial={{ opacity: 0, scale: 0.9 }}
                animate={{ opacity: 1, scale: 1 }}
-               transition={{ delay: 0.8, type: "spring" }}
-               className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center w-full max-w-lg mx-auto"
+               transition={{ delay: 0.4, type: "spring" }}
+               className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center w-full max-w-lg mx-auto relative z-40 md:-mt-6"
             >
                  <motion.a 
                    href={WHATSAPP_LINK}
-                   whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(147, 51, 234, 0.8)" }}
+                   whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(249, 115, 22, 0.6)" }}
                    whileTap={{ scale: 0.95 }}
                    animate={{ scale: [1, 1.03, 1] }}
                    transition={{ scale: { duration: 2, repeat: Infinity, ease: "easeInOut" } }}
-                   className="flex-1 py-4 md:py-5 px-6 md:px-8 bg-gradient-to-r from-party-purple to-party-pink text-white rounded-2xl font-bold text-lg md:text-xl shadow-neon-purple flex items-center justify-center gap-3 transition-all border-2 border-white/30"
+                   className="flex-1 py-4 md:py-5 px-6 md:px-8 bg-gradient-to-r from-party-orange to-party-yellow text-white rounded-2xl font-bold text-lg md:text-xl shadow-[0_10px_25px_-5px_rgba(249,115,22,0.4)] flex items-center justify-center gap-3 transition-all border-2 border-white/30"
                  >
                     <MessageCircle size={24} /> Fazer Orçamento
                  </motion.a>
@@ -693,9 +545,9 @@ const Hero: React.FC = () => {
                     href="#atracoes"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex-1 py-4 md:py-5 px-6 md:px-8 bg-white/80 text-party-purple border-4 border-party-purple rounded-2xl font-bold text-lg md:text-xl flex items-center justify-center gap-3 hover:bg-party-purple/5 shadow-md transition-all hover:shadow-neon-purple backdrop-blur-sm"
+                    className="flex-1 py-4 md:py-5 px-6 md:px-8 bg-white/80 text-gray-800 border-4 border-party-cyan rounded-2xl font-bold text-lg md:text-xl flex items-center justify-center gap-3 hover:bg-party-cyan/20 shadow-md transition-all hover:shadow-[0_10px_25px_-5px_rgba(165,243,252,0.4)] backdrop-blur-sm"
                  >
-                    <Wand2 className="animate-spin-slow" size={24} /> Ver Atrações
+                    <Wand2 className="animate-spin-slow text-party-orange" size={24} /> Ver Atrações
                  </motion.a>
             </motion.div>
         </div>
@@ -717,7 +569,7 @@ const GastronomySection: React.FC = () => {
          title="Cardápio Delicioso" 
          subtitle="Sabores que encantam crianças e adultos!" 
          glitch={true}
-         subtitleClassName="font-fredoka text-transparent bg-clip-text bg-gradient-to-r from-party-purple via-party-pink to-party-yellow font-bold"
+         subtitleClassName="font-fredoka text-transparent bg-clip-text bg-gradient-to-r from-party-purple via-party-pink to-party-orange font-bold"
        />
        
        <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -733,7 +585,7 @@ const GastronomySection: React.FC = () => {
                <motion.div 
                  animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: index * 0.5 }}
-                 className="w-16 h-16 bg-party-yellow/20 rounded-full flex items-center justify-center text-party-yellow mb-6 mx-auto"
+                 className="w-16 h-16 bg-party-yellow/20 rounded-full flex items-center justify-center text-party-orange mb-6 mx-auto"
                >
                  {item.icon}
                </motion.div>
@@ -879,7 +731,6 @@ const SafetySection: React.FC = () => {
 
   return (
     <section id="seguranca" className="py-20 bg-slate-50 relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div className="absolute top-10 -left-10 w-60 h-60 bg-party-purple/5 rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 -right-10 w-60 h-60 bg-party-cyan/5 rounded-full blur-3xl"></div>
@@ -939,8 +790,8 @@ const LocationSection: React.FC = () => {
                             <MapPin className="text-party-purple" /> Endereço
                         </h3>
                         <p className="text-gray-600 font-sora text-lg leading-relaxed mb-6">
-                            Av. Elias Maluf, 0000<br/>
-                            Wanel Ville, Sorocaba - SP<br/>
+                            Av. Elias Maluf, Wanel Ville<br/>
+                            Sorocaba - SP<br/>
                             CEP: 18000-000
                         </p>
                         <a 
@@ -954,7 +805,7 @@ const LocationSection: React.FC = () => {
 
                     <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
                         <h3 className="text-2xl font-fredoka font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <CalendarClock className="text-party-pink" /> Horário de Atendimento
+                            <CalendarClock className="text-party-orange" /> Horário de Atendimento
                         </h3>
                          <ul className="space-y-2 text-gray-600 font-sora">
                             <li className="flex justify-between">
@@ -997,9 +848,9 @@ const Footer: React.FC = () => {
     <footer className="bg-slate-900 text-white pt-20 pb-10 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-party-purple via-party-pink to-party-cyan"></div>
         
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:col-span-4 gap-12 relative z-10">
             <div className="col-span-1 md:col-span-2">
-                <h3 className="text-3xl font-fredoka font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-party-pink to-party-purple">
+                <h3 className="text-3xl font-fredoka font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-party-cyan to-party-purple">
                   Buffet dos Sonhos
                 </h3>
                 <p className="text-gray-400 font-sora max-w-sm mb-8">
@@ -1007,7 +858,7 @@ const Footer: React.FC = () => {
                 </p>
                 <div className="flex gap-4">
                   {[MessageCircle, Instagram, MapPin].map((Icon, i) => (
-                    <a key={i} href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-party-pink transition-colors group">
+                    <a key={i} href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-party-cyan transition-colors group">
                       <Icon size={20} className="group-hover:animate-spin-slow" />
                     </a>
                   ))}
@@ -1029,10 +880,10 @@ const Footer: React.FC = () => {
               <ul className="space-y-3 font-sora text-gray-400">
                 <li className="flex items-start gap-3">
                   <MapPin size={20} className="shrink-0 text-party-purple" />
-                  <span>Av. Elias Maluf, 0000<br/>Wanel Ville, Sorocaba - SP</span>
+                  <span>Av. Elias Maluf, Wanel Ville<br/>Sorocaba - SP</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <MessageCircle size={20} className="shrink-0 text-party-green" />
+                  <MessageCircle size={20} className="shrink-0 text-party-orange" />
                   <span>(15) 99999-9999</span>
                 </li>
                 <li className="flex items-center gap-3">
@@ -1057,14 +908,11 @@ const App: React.FC = () => {
       <Header />
       <Hero />
       
-      {/* Main Content Wrapper with Continuous Confetti (excluding Hero) */}
       <div className="relative">
-         {/* Confetti Layer - Low z-index but above backgrounds, pointer-events-none to not block interactions */}
          <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden">
             <ContinuousConfetti />
          </div>
 
-         {/* Sections */}
          <div className="relative z-20">
             <AttractionsSection />
             <GastronomySection />
