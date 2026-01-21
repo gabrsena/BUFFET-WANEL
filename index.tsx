@@ -34,7 +34,12 @@ import {
   Heart,
   Instagram,
   Sparkles,
-  Lock
+  Lock,
+  Plus,
+  ChevronDown,
+  Waves,
+  Trees,
+  Palette
 } from 'lucide-react';
 
 // --- TYPES ---
@@ -54,6 +59,11 @@ interface TestimonialProps {
   stars: number;
 }
 
+interface FAQItemProps {
+  question: string;
+  answer: string;
+}
+
 // --- CONSTANTS ---
 const WHATSAPP_LINK = "https://wa.me/5515999999999?text=Ol%C3%A1!%20Gostaria%20de%20consultar%20disponibilidade%20para%20uma%20festa%20no%20Buffet.";
 
@@ -67,7 +77,7 @@ const TESTIMONIALS: TestimonialProps[] = [
   {
     name: "Marcos",
     role: "Pai de 2",
-    content: "Buffet nota 10 no Wanel Ville. Comida farta e quentinha. Super recoendo para quem quer tranquilidade e diversão.",
+    content: "Buffet nota 10 no Wanel Ville. Comida farta e quentinha. Super recomendo para quem quer tranquilidade e diversão.",
     stars: 5
   },
   {
@@ -82,7 +92,7 @@ const ATTRACTIONS_DATA: FeatureProps[] = [
   {
     icon: <Castle size={40} />,
     title: "Brinquedos Incríveis",
-    description: "Diversão que faz os olhinhos brilharem!",
+    description: "Diversão que faz os olhinhos brilharem com o nosso super brinquedão neon!",
     color: "bg-party-purple",
     glow: "shadow-neon-purple",
     borderColor: "border-party-purple"
@@ -90,7 +100,7 @@ const ATTRACTIONS_DATA: FeatureProps[] = [
   {
     icon: <Baby size={40} />,
     title: "Área Baby",
-    description: "Um espaço lúdico e protegido, projetado especialmente para os pequenos exploradores brilharem com total tranquilidade.",
+    description: "Um espaço lúdico e protegido para os pequenos exploradores brincarem seguros.",
     color: "bg-party-pink",
     glow: "shadow-neon-pink",
     borderColor: "border-party-pink"
@@ -98,16 +108,78 @@ const ATTRACTIONS_DATA: FeatureProps[] = [
   {
     icon: <Gamepad2 size={40} />,
     title: "Arena Games",
-    description: "O paraíso dos gamers! Consoles de última geração para garantir o entretenimento dos mais velhos.",
+    description: "O paraíso dos gamers! Consoles de última geração para os maiores.",
+    color: "bg-party-cyan",
+    glow: "shadow-neon-cyan",
+    borderColor: "border-party-cyan"
+  },
+  {
+    icon: <Rocket size={40} />,
+    title: "Tirolesa",
+    description: "Uma aventura inesquecível pelo ar com total segurança para os pequenos aventureiros.",
+    color: "bg-party-orange",
+    glow: "shadow-neon-orange",
+    borderColor: "border-party-orange"
+  },
+  {
+    icon: <Waves size={40} />,
+    title: "Piscina Gigante",
+    description: "Milhares de bolinhas coloridas em uma piscina gigante que é pura alegria.",
+    color: "bg-party-yellow",
+    glow: "shadow-neon-yellow",
+    borderColor: "border-party-yellow"
+  },
+  {
+    icon: <Trees size={40} />,
+    title: "Arvorismo",
+    description: "Circuito de cordas indoor para desafiar o equilíbrio e a coragem.",
+    color: "bg-party-purple",
+    glow: "shadow-neon-purple",
+    borderColor: "border-party-purple"
+  },
+  {
+    icon: <Palette size={40} />,
+    title: "Oficina Slime",
+    description: "Momento de criatividade e diversão tátil que as crianças simplesmente amam!",
+    color: "bg-party-pink",
+    glow: "shadow-neon-pink",
+    borderColor: "border-party-pink"
+  },
+  {
+    icon: <Crown size={40} />,
+    title: "Camarim Fashion",
+    description: "Pintura facial e adereços para transformar cada convidado em uma estrela.",
     color: "bg-party-cyan",
     glow: "shadow-neon-cyan",
     borderColor: "border-party-cyan"
   }
 ];
 
+const FAQ_DATA: FAQItemProps[] = [
+  {
+    question: "Qual é a duração padrão das festas?",
+    answer: "Nossas festas têm duração padrão de 4 horas, com 30 minutos de tolerância para a saída dos convidados. Oferecemos também a opção de horas adicionais, caso deseje estender a diversão!"
+  },
+  {
+    question: "O que está incluso no pacote de gastronomia?",
+    answer: "Nossos pacotes incluem salgados premium fritos na hora, doces artesanais, bolo temático, além de bebidas (sucos, refrigerantes e água) servidas à vontade durante todo o evento."
+  },
+  {
+    question: "Qual a capacidade máxima do buffet?",
+    answer: "Conseguimos acomodar confortavelmente até 120 convidados, garantindo espaço amplo para circulação, mesas bem distribuídas e total segurança nas áreas de brinquedos."
+  },
+  {
+    question: "Como funciona a reserva da data?",
+    answer: "Para garantir sua data, solicitamos um sinal de 30% do valor total. O restante pode ser parcelado no cartão de crédito ou quitado até 10 dias antes do evento."
+  },
+  {
+    question: "Vocês oferecem monitores para as crianças?",
+    answer: "Sim! Temos uma equipe de monitores altamente treinados que acompanham as crianças em todos os brinquedos, garantindo diversão segura enquanto os pais aproveitam a festa."
+  }
+];
+
 // --- INTERNAL COMPONENTS ---
 
-// 0. Horizontal Moving Clouds Component - Refined for Ethereal feel
 const MovingClouds: React.FC<{ zIndex: number, count?: number, speedMultiplier?: number }> = ({ zIndex, count = 5, speedMultiplier = 1 }) => {
   const clouds = Array.from({ length: count }).map((_, i) => {
     const isDense = Math.random() > 0.75;
@@ -151,7 +223,7 @@ const MovingClouds: React.FC<{ zIndex: number, count?: number, speedMultiplier?:
           <Cloud 
             size={cloud.size} 
             className={`text-white fill-white filter drop-shadow-sm ${cloud.blur}`} 
-            style={{ opacity: 1 }} // Controlled by parent motion.div
+            style={{ opacity: 1 }}
           />
         </motion.div>
       ))}
@@ -159,7 +231,6 @@ const MovingClouds: React.FC<{ zIndex: number, count?: number, speedMultiplier?:
   );
 };
 
-// 2. Global Balloons (Parallax Effect)
 const GlobalBalloons: React.FC = () => {
   const { scrollYProgress } = useScroll();
   
@@ -203,7 +274,6 @@ const GlobalBalloons: React.FC = () => {
   );
 };
 
-// 4. Confetti Component
 const ContinuousConfetti: React.FC = () => {
   const pieces = Array.from({ length: 40 });
   const colors = ['#9333ea', '#db2777', '#facc15', '#a5f3fc', '#ffffff'];
@@ -240,7 +310,6 @@ const ContinuousConfetti: React.FC = () => {
   );
 };
 
-// 6. Section Title
 const PartySectionTitle: React.FC<{ title: string, subtitle?: string, subtitleClassName?: string, glitch?: boolean }> = ({ title, subtitle, subtitleClassName, glitch = false }) => {
   const glitchVariants: Variants = {
     normal: { skewX: 0, x: 0, opacity: 1 },
@@ -377,7 +446,7 @@ const Header: React.FC = () => {
   const backdrop = useTransform(scrollY, [0, 50], ["blur(0px)", "blur(16px)"]);
   const shadow = useTransform(scrollY, [0, 50], ["0 0 0 rgba(0,0,0,0)", "0 10px 30px -5px rgba(0, 0, 0, 0.1)"]);
   const border = useTransform(scrollY, [0, 50], ["rgba(147, 51, 234, 0)", "rgba(147, 51, 234, 0.1)"]);
-  const height = useTransform(scrollY, [0, 50], ["6rem", "4.5rem"]); 
+  const height = useTransform(scrollY, [0, 50], ["6.5rem", "5rem"]); 
 
   const navColors = [
       'text-party-purple hover:text-party-pink', 
@@ -388,7 +457,7 @@ const Header: React.FC = () => {
       'text-party-cyan hover:text-party-yellow',
   ];
 
-  const menuItems = ["Início", "Atrações", "Cardápio", "Segurança", "Depoimentos", "Localização"];
+  const menuItems = ["Início", "Atrações", "Cardápio", "Segurança", "Depoimentos", "Localização", "FAQ"];
 
   return (
     <motion.nav 
@@ -401,31 +470,42 @@ const Header: React.FC = () => {
       }}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-40 border-b border-transparent transition-all duration-300 flex items-center"
+      className="fixed top-0 left-0 right-0 z-50 border-b border-transparent transition-all duration-300 flex items-center"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="flex justify-between items-center w-full">
-          <div className="flex items-center gap-2 group cursor-pointer z-50">
-          </div>
+          <div className="flex items-center gap-2"></div>
           
-          <div className="hidden md:flex items-center space-x-8 font-fredoka font-bold text-lg">
+          <div className="hidden md:flex items-center space-x-6 font-fredoka font-bold text-base lg:text-lg">
             {menuItems.map((item, index) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`} 
-                className={`${navColors[index % navColors.length]} transition-all transform hover:scale-110 hover:rotate-3 drop-shadow-sm`}
+                className={`${navColors[index % navColors.length]} transition-all transform hover:scale-110 drop-shadow-sm`}
               >
                 {item}
               </a>
             ))}
           </div>
 
-          <button 
-            className="md:hidden z-50 p-2 text-party-purple bg-party-purple/10 rounded-xl backdrop-blur-sm border border-party-purple/20"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          <div className="flex items-center gap-4">
+             <motion.a 
+               href={WHATSAPP_LINK}
+               target="_blank"
+               whileHover={{ scale: 1.05 }}
+               whileTap={{ scale: 0.95 }}
+               className="hidden md:flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-party-orange to-party-yellow text-white rounded-full font-fredoka font-bold shadow-[0_4px_15px_rgba(249,115,22,0.3)] border-2 border-white/20"
+             >
+               <MessageCircle size={20} /> Orçamento
+             </motion.a>
+
+             <button 
+               className="md:hidden z-50 p-2 text-party-purple bg-party-purple/10 rounded-xl backdrop-blur-sm border border-party-purple/20"
+               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+             >
+               {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+             </button>
+          </div>
 
           <AnimatePresence>
             {isMobileMenuOpen && (
@@ -487,7 +567,7 @@ const Hero: React.FC = () => {
   return (
     <section 
       id="inicio" 
-      className="pt-32 pb-20 md:pt-40 md:pb-32 px-4 min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-slate-50 perspective-1000"
+      className="pt-32 pb-20 md:pt-40 md:pb-24 px-4 min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-slate-50 perspective-1000"
       onMouseMove={handleMouseMove}
     >
       <motion.div 
@@ -499,7 +579,6 @@ const Hero: React.FC = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-party-cyan/30 rounded-full blur-[100px]" />
       </motion.div>
       
-      {/* Background Clouds (Behind Mascot) - Dense & Ethereal setup */}
       <MovingClouds zIndex={5} count={40} speedMultiplier={0.7} />
 
       <motion.div 
@@ -507,64 +586,154 @@ const Hero: React.FC = () => {
         className="max-w-6xl mx-auto w-full flex flex-col items-center relative z-10 text-center"
       >
         <div className="flex flex-col items-center relative w-full">
-            
-            {/* Foreground Clouds (In front of Mascot) - Dense & Ethereal setup */}
             <MovingClouds zIndex={30} count={30} speedMultiplier={1.5} />
 
-            {/* Hero Image - Optimized for focus, moved up on Desktop to reveal buttons */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="w-full flex justify-center mb-8 md:mb-2 md:-mt-32 relative z-20"
+              initial={{ opacity: 0, scale: 0.9, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ 
+                duration: 1.5, 
+                ease: [0.16, 1, 0.3, 1],
+                delay: 0.2
+              }}
+              className="w-full flex justify-center mb-4 md:mb-0 md:-mt-40 relative z-20"
             >
               <img 
                 src="https://i.imgur.com/i1z4W2C.png" 
                 alt="Mascote Ateliê Kids" 
-                className="w-[90%] h-auto drop-shadow-2xl"
+                className="w-[90%] md:w-[75%] lg:w-[65%] h-auto drop-shadow-2xl"
               />
             </motion.div>
 
             <motion.div 
-               initial={{ opacity: 0, scale: 0.9 }}
-               animate={{ opacity: 1, scale: 1 }}
-               transition={{ delay: 0.4, type: "spring" }}
-               className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center w-full max-w-lg mx-auto relative z-40 md:-mt-6"
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 1, type: "spring" }}
+               className="relative z-40 mt-4 md:mt-0"
             >
                  <motion.a 
-                   href={WHATSAPP_LINK}
-                   whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(249, 115, 22, 0.6)" }}
-                   whileTap={{ scale: 0.95 }}
-                   animate={{ scale: [1, 1.03, 1] }}
-                   transition={{ scale: { duration: 2, repeat: Infinity, ease: "easeInOut" } }}
-                   className="flex-1 py-4 md:py-5 px-6 md:px-8 bg-gradient-to-r from-party-orange to-party-yellow text-white rounded-2xl font-bold text-lg md:text-xl shadow-[0_10px_25px_-5px_rgba(249,115,22,0.4)] flex items-center justify-center gap-3 transition-all border-2 border-white/30"
-                 >
-                    <MessageCircle size={24} /> Fazer Orçamento
-                 </motion.a>
-                 <motion.a 
                     href="#atracoes"
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.1, rotate: 2 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex-1 py-4 md:py-5 px-6 md:px-8 bg-white/80 text-gray-800 border-4 border-party-cyan rounded-2xl font-bold text-lg md:text-xl flex items-center justify-center gap-3 hover:bg-party-cyan/20 shadow-md transition-all hover:shadow-[0_10px_25px_-5px_rgba(165,243,252,0.4)] backdrop-blur-sm"
+                    className="group py-4 px-10 md:py-5 md:px-14 bg-white/90 text-gray-800 border-4 border-party-cyan rounded-full font-fredoka font-bold text-xl md:text-2xl flex items-center justify-center gap-3 backdrop-blur-md shadow-[0_10px_30px_rgba(165,243,252,0.5)] hover:bg-party-cyan/20 transition-all"
                  >
-                    <Wand2 className="animate-spin-slow text-party-orange" size={24} /> Ver Atrações
+                    <Wand2 className="text-party-orange group-hover:animate-spin-slow" size={32} /> Ver atrações
                  </motion.a>
             </motion.div>
+
+            <div className="md:hidden w-full max-w-xs mt-6">
+                <motion.a 
+                   href={WHATSAPP_LINK}
+                   whileHover={{ scale: 1.05 }}
+                   whileTap={{ scale: 0.95 }}
+                   className="w-full py-4 px-6 bg-gradient-to-r from-party-orange to-party-yellow text-white rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-3 border-2 border-white/30"
+                 >
+                    <MessageCircle size={24} /> Orçamento via WhatsApp
+                 </motion.a>
+            </div>
         </div>
       </motion.div>
     </section>
   );
 };
 
+const FAQSection: React.FC = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <section id="faq" className="py-20 bg-slate-50 relative overflow-hidden">
+      <PartySectionTitle 
+        title="Dúvidas Frequentes" 
+        subtitle="Tudo o que você precisa saber para planejar sua festa"
+        subtitleClassName="font-fredoka text-gray-700"
+      />
+
+      <div className="max-w-4xl mx-auto px-4 relative z-10">
+        <div className="space-y-4">
+          {FAQ_DATA.map((item, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className={`bg-white rounded-3xl border-2 transition-all duration-300 overflow-hidden ${isOpen ? 'border-party-orange shadow-lg' : 'border-gray-100 hover:border-party-cyan'}`}
+              >
+                <button 
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  className="w-full px-6 py-5 md:px-8 md:py-6 flex items-center justify-between gap-4 text-left"
+                >
+                  <span className={`font-fredoka font-bold text-lg md:text-xl transition-colors ${isOpen ? 'text-party-orange' : 'text-gray-800'}`}>
+                    {item.question}
+                  </span>
+                  <motion.div
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isOpen ? 'bg-party-orange text-white' : 'bg-party-cyan/20 text-party-cyan'}`}
+                  >
+                    <ChevronDown size={24} />
+                  </motion.div>
+                </button>
+
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    >
+                      <div className="px-6 pb-6 md:px-8 md:pb-8">
+                        <div className="h-px w-full bg-gray-100 mb-6" />
+                        <p className="font-sora text-gray-600 leading-relaxed md:text-lg">
+                          {item.answer}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const GastronomySection: React.FC = () => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   const menuItems = [
-    { name: "Salgados Premium", icon: <ChefHat size={32} />, desc: "Coxinhas, quibes, risoles e muito mais, tudo frito na hora!" },
-    { name: "Doces Artesanais", icon: <Cake size={32} />, desc: "Brigadeiros gourmet, beijinhos e doces finos que derretem na boca." },
-    { name: "Bebidas", icon: <Utensils size={32} />, desc: "Sucos naturais, refrigerantes e água servidos à vontade." }
+    { 
+      name: "Salgados Premium", 
+      icon: <ChefHat size={32} />, 
+      desc: "Coxinhas, quibes, risoles e muito mais, tudo frito na hora!",
+      image: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&q=80&w=600",
+      glow: "hover:shadow-neon-orange",
+      border: "hover:border-party-orange"
+    },
+    { 
+      name: "Doces Artesanais", 
+      icon: <Cake size={32} />, 
+      desc: "Brigadeiros gourmet, beijinhos e doces finos que derretem na boca.",
+      image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&q=80&w=600",
+      glow: "hover:shadow-neon-pink",
+      border: "hover:border-party-pink"
+    },
+    { 
+      name: "Bebidas", 
+      icon: <Utensils size={32} />, 
+      desc: "Sucos naturais, refrigerantes e água servidos à vontade.",
+      image: "https://images.unsplash.com/photo-1497515114629-f71d768fd07c?auto=format&fit=crop&q=80&w=600",
+      glow: "hover:shadow-neon-cyan",
+      border: "hover:border-party-cyan"
+    }
   ];
 
   return (
-    <section id="cardapio" className="py-20 relative bg-white">
+    <section id="cardapio" className="py-20 relative bg-white overflow-hidden">
        <PartySectionTitle 
          title="Cardápio Delicioso" 
          subtitle="Sabores que encantam crianças e adultos!" 
@@ -576,21 +745,42 @@ const GastronomySection: React.FC = () => {
           {menuItems.map((item, index) => (
             <motion.div
               key={index}
+              layout
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="bg-slate-50 p-8 rounded-3xl border-4 border-party-yellow/20 hover:border-party-yellow transition-colors shadow-lg hover:shadow-neon-yellow group"
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              className={`bg-slate-50 p-6 md:p-8 rounded-[2.5rem] border-4 border-slate-100 ${item.border} ${item.glow} transition-all duration-500 shadow-xl group relative overflow-hidden flex flex-col items-center cursor-pointer`}
+              whileHover={{ scale: 1.05 }}
             >
                <motion.div 
-                 animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: index * 0.5 }}
-                 className="w-16 h-16 bg-party-yellow/20 rounded-full flex items-center justify-center text-party-orange mb-6 mx-auto"
+                 layout
+                 className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-gray-800 mb-6 shadow-sm border border-slate-100 group-hover:rotate-12 transition-transform duration-500"
                >
                  {item.icon}
                </motion.div>
-               <h3 className="text-2xl font-fredoka font-bold text-gray-800 mb-3 text-center">{item.name}</h3>
-               <p className="text-gray-600 font-sora text-center">{item.desc}</p>
+               <h3 className="text-2xl font-fredoka font-bold text-gray-800 mb-4 text-center group-hover:text-party-orange transition-colors">{item.name}</h3>
+               <p className="text-gray-600 font-sora text-center text-sm md:text-base mb-4 leading-relaxed">{item.desc}</p>
+               
+               <AnimatePresence>
+                 {hoveredIndex === index && (
+                   <motion.div
+                     initial={{ height: 0, opacity: 0, scale: 0.8 }}
+                     animate={{ height: 200, opacity: 1, scale: 1 }}
+                     exit={{ height: 0, opacity: 0, scale: 0.8 }}
+                     transition={{ duration: 0.4, ease: "circOut" }}
+                     className="w-full mt-4 rounded-3xl overflow-hidden shadow-inner relative"
+                   >
+                     <img 
+                       src={item.image} 
+                       alt={item.name}
+                       className="w-full h-full object-cover transform scale-110 group-hover:scale-100 transition-transform duration-700"
+                     />
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                   </motion.div>
+                 )}
+               </AnimatePresence>
             </motion.div>
           ))}
        </div>
@@ -599,51 +789,47 @@ const GastronomySection: React.FC = () => {
 };
 
 const AttractionsSection: React.FC = () => {
+    const extendedAttractions = [...ATTRACTIONS_DATA, ...ATTRACTIONS_DATA];
+
     return (
         <section id="atracoes" className="py-20 bg-slate-50 relative overflow-hidden">
             <PartySectionTitle 
               title="Atrações Incríveis" 
-              subtitle="Diversão garantida para todas as idades" 
+              subtitle="Diversão garantida para todas as idades com loop infinito de alegria" 
               subtitleClassName="font-fredoka text-transparent bg-clip-text bg-gradient-to-r from-party-cyan via-party-purple to-party-pink font-bold"
             />
             
-            <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-                {ATTRACTIONS_DATA.map((feature, index) => (
-                    <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 50 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.2 }}
-                        whileHover={{ y: -10 }}
-                        className={`bg-white rounded-[2rem] p-8 border-4 ${feature.borderColor} shadow-xl hover:${feature.glow} transition-all duration-300 relative overflow-hidden group`}
-                    >
-                        <div className={`absolute -right-10 -top-10 w-40 h-40 ${feature.color} opacity-10 rounded-full group-hover:scale-150 transition-transform duration-500`}></div>
-                        
-                        <motion.div 
-                            animate={{ 
-                                y: [0, -8, 0],
-                                scale: [1, 1.05, 1]
-                            }}
-                            transition={{ 
-                                duration: 3, 
-                                repeat: Infinity, 
-                                ease: "easeInOut",
-                                delay: index * 0.3
-                            }}
-                            className={`w-20 h-20 ${feature.color} bg-opacity-20 rounded-2xl flex items-center justify-center text-${feature.color.replace('bg-', '')} mb-6`}
+            <div className="relative w-full overflow-hidden py-10">
+                <motion.div 
+                    className="flex gap-8 px-4"
+                    animate={{ x: ["0%", "-50%"] }}
+                    transition={{ 
+                        duration: 35, 
+                        repeat: Infinity, 
+                        ease: "linear" 
+                    }}
+                    style={{ width: "fit-content" }}
+                >
+                    {extendedAttractions.map((feature, index) => (
+                        <div
+                            key={index}
+                            className={`flex-shrink-0 w-[280px] md:w-[350px] bg-white rounded-[2rem] p-8 border-4 ${feature.borderColor} shadow-xl relative overflow-hidden group transition-all hover:scale-105`}
                         >
-                           <div className={feature.title === "Brinquedos Incríveis" ? "text-party-purple" : feature.title === "Área Baby" ? "text-party-pink" : "text-party-cyan"}>
-                               {feature.icon}
-                           </div>
-                        </motion.div>
-                        
-                        <h3 className="text-2xl font-fredoka font-bold text-gray-800 mb-4">{feature.title}</h3>
-                        <p className="text-gray-600 font-sora leading-relaxed">
-                            {feature.description}
-                        </p>
-                    </motion.div>
-                ))}
+                            <div className={`absolute -right-10 -top-10 w-40 h-40 ${feature.color} opacity-10 rounded-full group-hover:scale-150 transition-transform duration-500`}></div>
+                            
+                            <div className={`w-20 h-20 ${feature.color} bg-opacity-20 rounded-2xl flex items-center justify-center mb-6`}>
+                               <div className="text-gray-800">
+                                   {feature.icon}
+                               </div>
+                            </div>
+                            
+                            <h3 className="text-2xl font-fredoka font-bold text-gray-800 mb-4">{feature.title}</h3>
+                            <p className="text-gray-600 font-sora leading-relaxed text-sm md:text-base">
+                                {feature.description}
+                            </p>
+                        </div>
+                    ))}
+                </motion.div>
             </div>
         </section>
     );
@@ -851,7 +1037,7 @@ const Footer: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:col-span-4 gap-12 relative z-10">
             <div className="col-span-1 md:col-span-2">
                 <h3 className="text-3xl font-fredoka font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-party-cyan to-party-purple">
-                  Buffet dos Sonhos
+                  Festa Total
                 </h3>
                 <p className="text-gray-400 font-sora max-w-sm mb-8">
                   Criando memórias mágicas e momentos inesquecíveis para você e sua família. O melhor buffet infantil de Sorocaba e região.
@@ -895,7 +1081,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="mt-16 pt-8 border-t border-white/10 text-center text-gray-500 font-sora text-sm">
-          <p>© {new Date().getFullYear()} Buffet dos Sonhos. Todos os direitos reservados.</p>
+          <p>© {new Date().getFullYear()} Festa Total. Todos os direitos reservados.</p>
         </div>
     </footer>
   );
@@ -918,6 +1104,7 @@ const App: React.FC = () => {
             <GastronomySection />
             <SafetySection />
             <TestimonialsSection />
+            <FAQSection />
             <LocationSection />
          </div>
       </div>
