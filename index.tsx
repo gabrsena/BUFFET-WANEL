@@ -184,27 +184,25 @@ const FAQ_DATA: FAQItemProps[] = [
 // --- INTERNAL COMPONENTS ---
 
 const MagicSparkles: React.FC = () => {
-  const sparkles = Array.from({ length: 200 }).map((_, i) => ({
+  const sparkles = Array.from({ length: 150 }).map((_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
-    size: Math.random() * 6 + 1,
-    duration: Math.random() * 3 + 1,
-    delay: Math.random() * 10,
-    color: ['#a5f3fc', '#facc15', '#ffffff', '#db2777', '#9333ea', '#f97316'][Math.floor(Math.random() * 6)]
+    size: Math.random() * 4 + 1,
+    duration: Math.random() * 2 + 1,
+    delay: Math.random() * 5,
+    color: ['#a5f3fc', '#facc15', '#ffffff', '#db2777', '#9333ea'][Math.floor(Math.random() * 5)]
   }));
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-[5]">
       {sparkles.map((s) => (
         <motion.div
           key={s.id}
           initial={{ opacity: 0, scale: 0 }}
           animate={{ 
-            opacity: [0, 1, 0],
-            scale: [0, 1.2, 0],
-            y: [0, -40, -80],
-            x: [0, (Math.random() - 0.5) * 40, 0]
+            opacity: [0, 0.8, 0],
+            scale: [0, 1, 0],
           }}
           transition={{
             duration: s.duration,
@@ -220,54 +218,9 @@ const MagicSparkles: React.FC = () => {
             height: s.size,
             backgroundColor: s.color,
             borderRadius: '50%',
-            filter: 'blur(0.5px)',
-            boxShadow: `0 0 15px ${s.color}`
+            boxShadow: `0 0 10px ${s.color}`
           }}
         />
-      ))}
-    </div>
-  );
-};
-
-const PartyFloatingElements: React.FC = () => {
-  const elements = Array.from({ length: 25 }).map((_, i) => {
-    const Icons = [Star, Heart, Music, Sparkles, PartyPopper, Zap];
-    const SelectedIcon = Icons[Math.floor(Math.random() * Icons.length)];
-    return {
-      id: i,
-      SelectedIcon,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      size: Math.random() * 30 + 15,
-      duration: Math.random() * 15 + 10,
-      delay: Math.random() * 15,
-      color: ['text-party-pink', 'text-party-yellow', 'text-party-cyan', 'text-party-purple'][Math.floor(Math.random() * 4)],
-      rotation: Math.random() * 360
-    };
-  });
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-[2]">
-      {elements.map((el) => (
-        <motion.div
-          key={el.id}
-          initial={{ y: "110vh", x: el.left, opacity: 0, rotate: 0 }}
-          animate={{ 
-            y: "-10vh",
-            opacity: [0, 0.4, 0.4, 0],
-            rotate: el.rotation + 360,
-            x: `calc(${el.left} + ${Math.sin(el.id) * 50}px)`
-          }}
-          transition={{
-            duration: el.duration,
-            repeat: Infinity,
-            delay: el.delay,
-            ease: "linear"
-          }}
-          className={`absolute ${el.color}`}
-        >
-          <el.SelectedIcon size={el.size} strokeWidth={1} fill="currentColor" className="opacity-20" />
-        </motion.div>
       ))}
     </div>
   );
@@ -725,6 +678,34 @@ const Hero: React.FC = () => {
     >
       <CalendarModal isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} />
       
+      {/* Magic Glow Effects Background */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-party-purple/20 rounded-full blur-[120px]" 
+          />
+          <motion.div 
+            animate={{ 
+              scale: [1.2, 1, 1.2],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-1/4 left-1/4 w-[600px] h-[600px] bg-party-cyan/20 rounded-full blur-[140px]" 
+          />
+          <motion.div 
+            animate={{ 
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-party-pink/10 rounded-full blur-[160px]" 
+          />
+          <MagicSparkles />
+      </div>
+
       <motion.div 
         style={{ y: yContentScroll, x: xContentSpring, translateY: yContentSpring }} 
         className="max-w-6xl mx-auto w-full flex flex-col items-center relative z-10 text-center"
