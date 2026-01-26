@@ -103,7 +103,7 @@ const ATTRACTIONS_DATA: FeatureProps[] = [
   {
     icon: <Baby size={40} />,
     title: "Área Baby",
-    description: "Um espaço lúdico e protegido para os pequenos exploradores brincarem seguros.",
+    description: "Um espaço lúdico e protegido para os pequenos exploradores brilharem seguros.",
     color: "bg-party-pink",
     glow: "shadow-neon-pink",
     borderColor: "border-party-pink"
@@ -183,6 +183,98 @@ const FAQ_DATA: FAQItemProps[] = [
 
 // --- INTERNAL COMPONENTS ---
 
+const MagicSparkles: React.FC = () => {
+  // Aumentado para 200 partículas (5x mais)
+  const sparkles = Array.from({ length: 200 }).map((_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    top: `${Math.random() * 100}%`,
+    size: Math.random() * 6 + 1,
+    duration: Math.random() * 3 + 1,
+    delay: Math.random() * 10,
+    color: ['#a5f3fc', '#facc15', '#ffffff', '#db2777', '#9333ea', '#f97316'][Math.floor(Math.random() * 6)]
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+      {sparkles.map((s) => (
+        <motion.div
+          key={s.id}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ 
+            opacity: [0, 1, 0],
+            scale: [0, 1.2, 0],
+            y: [0, -40, -80],
+            x: [0, (Math.random() - 0.5) * 40, 0]
+          }}
+          transition={{
+            duration: s.duration,
+            repeat: Infinity,
+            delay: s.delay,
+            ease: "easeInOut"
+          }}
+          style={{
+            position: 'absolute',
+            left: s.left,
+            top: s.top,
+            width: s.size,
+            height: s.size,
+            backgroundColor: s.color,
+            borderRadius: '50%',
+            filter: 'blur(0.5px)',
+            boxShadow: `0 0 15px ${s.color}`
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+const PartyFloatingElements: React.FC = () => {
+  const elements = Array.from({ length: 25 }).map((_, i) => {
+    const Icons = [Star, Heart, Music, Sparkles, PartyPopper, Zap];
+    const SelectedIcon = Icons[Math.floor(Math.random() * Icons.length)];
+    return {
+      id: i,
+      // Fix: Add SelectedIcon to the returned object so it can be accessed during rendering
+      SelectedIcon,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      size: Math.random() * 30 + 15,
+      duration: Math.random() * 15 + 10,
+      delay: Math.random() * 15,
+      color: ['text-party-pink', 'text-party-yellow', 'text-party-cyan', 'text-party-purple'][Math.floor(Math.random() * 4)],
+      rotation: Math.random() * 360
+    };
+  });
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-[2]">
+      {elements.map((el) => (
+        <motion.div
+          key={el.id}
+          initial={{ y: "110vh", x: el.left, opacity: 0, rotate: 0 }}
+          animate={{ 
+            y: "-10vh",
+            opacity: [0, 0.4, 0.4, 0],
+            rotate: el.rotation + 360,
+            x: `calc(${el.left} + ${Math.sin(el.id) * 50}px)`
+          }}
+          transition={{
+            duration: el.duration,
+            repeat: Infinity,
+            delay: el.delay,
+            ease: "linear"
+          }}
+          className={`absolute ${el.color}`}
+        >
+          <el.SelectedIcon size={el.size} strokeWidth={1} fill="currentColor" className="opacity-20" />
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
 const MonthGrid: React.FC<{ year: number; month: number }> = ({ year, month }) => {
   const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -193,7 +285,6 @@ const MonthGrid: React.FC<{ year: number; month: number }> = ({ year, month }) =
     const today = new Date();
     today.setHours(0,0,0,0);
     if (d < today) return false;
-    // Simulation: Weekends are mostly booked
     if (d.getDay() === 0 || d.getDay() === 6) return (day + month) % 5 === 0;
     return (day + month) % 3 !== 0;
   };
@@ -255,7 +346,6 @@ const CalendarModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isO
             exit={{ scale: 0.9, opacity: 0, y: 50 }}
             className="relative w-full max-w-6xl max-h-[90vh] bg-white rounded-[3rem] shadow-3xl border-4 border-party-purple flex flex-col overflow-hidden"
           >
-            {/* Header */}
             <div className="bg-party-purple p-8 text-white text-center relative shrink-0">
               <button onClick={onClose} className="absolute right-6 top-1/2 -translate-y-1/2 hover:rotate-90 transition-transform bg-white/20 p-2 rounded-full">
                 <X size={24} />
@@ -266,8 +356,6 @@ const CalendarModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isO
                 <p className="text-sm md:text-base opacity-90 font-sora mt-1">Consulte a disponibilidade para o ano inteiro</p>
               </div>
             </div>
-
-            {/* Scrollable Body */}
             <div className="flex-1 overflow-y-auto p-6 md:p-10 bg-white">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {months.map(m => (
@@ -275,8 +363,6 @@ const CalendarModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isO
                 ))}
               </div>
             </div>
-
-            {/* Footer */}
             <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6 shrink-0">
               <div className="flex flex-wrap items-center justify-center gap-6">
                 <div className="flex items-center gap-2 text-sm font-sora text-slate-600">
@@ -310,7 +396,7 @@ const MovingClouds: React.FC<{ zIndex: number, count?: number, speedMultiplier?:
       top: `${Math.random() * 95}%`,
       delay: Math.random() * 40,
       duration: ((Math.random() * 40 + 40) / (isVerySlow ? 0.5 : 1)) / speedMultiplier,
-      size: isDense ? Math.random() * 160 + 120 : Math.random() * 100 + 70,
+      size: i % 2 === 0 ? Math.random() * 160 + 120 : Math.random() * 100 + 70,
       opacity: isDense ? Math.random() * 0.3 + 0.35 : Math.random() * 0.15 + 0.05,
       blur: isDense ? 'blur-[2px]' : 'blur-[5px]',
       yAmplitude: Math.random() * 30 + 10,
@@ -396,8 +482,8 @@ const GlobalBalloons: React.FC = () => {
 };
 
 const ContinuousConfetti: React.FC = () => {
-  const pieces = Array.from({ length: 40 });
-  const colors = ['#9333ea', '#db2777', '#facc15', '#a5f3fc', '#ffffff'];
+  const pieces = Array.from({ length: 80 }); // Aumentado para 80 peças
+  const colors = ['#9333ea', '#db2777', '#facc15', '#a5f3fc', '#ffffff', '#f97316'];
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-30 h-full">
@@ -408,22 +494,25 @@ const ContinuousConfetti: React.FC = () => {
           animate={{ 
             top: "105%", 
             opacity: [0, 0.8, 0.8, 0],
-            rotate: [0, 360 + Math.random() * 360],
-            x: [0, Math.random() * 40 - 20, 0]
+            rotateX: [0, 360, 720],
+            rotateY: [0, 720, 360],
+            rotateZ: [0, 360 + Math.random() * 360],
+            x: [0, Math.random() * 100 - 50, 0]
           }}
           transition={{ 
-            duration: Math.random() * 15 + 10,
+            duration: Math.random() * 12 + 6,
             repeat: Infinity, 
             ease: "linear",
-            delay: Math.random() * 20
+            delay: Math.random() * 10
           }}
           style={{
             position: 'absolute',
             left: `${Math.random() * 100}%`,
-            width: Math.random() * 8 + 6,
-            height: Math.random() * 8 + 6,
+            width: Math.random() * 10 + 5,
+            height: Math.random() * 10 + 5,
             backgroundColor: colors[i % colors.length],
-            borderRadius: Math.random() > 0.5 ? '50%' : '2px',
+            borderRadius: Math.random() > 0.6 ? '50%' : '2px',
+            transformStyle: 'preserve-3d'
           }}
         />
       ))}
@@ -672,19 +761,19 @@ const Hero: React.FC = () => {
     mouseY.set((clientY - centerY) / centerY);
   };
 
-  const xContent = useTransform(mouseX, [-1, 1], [-20, 20]);
-  const yContentMouse = useTransform(mouseY, [-1, 1], [-20, 20]);
-  const xBlobs = useTransform(mouseX, [-1, 1], [30, -30]);
-  const yBlobsMouse = useTransform(mouseY, [-1, 1], [30, -30]);
+  const xContent = useTransform(mouseX, [-1, 1], [-30, 30]);
+  const yContentMouse = useTransform(mouseY, [-1, 1], [-30, 30]);
+  const xBlobs = useTransform(mouseX, [-1, 1], [50, -50]);
+  const yBlobsMouse = useTransform(mouseY, [-1, 1], [50, -50]);
 
-  const springConfig = { damping: 25, stiffness: 150 };
+  const springConfig = { damping: 25, stiffness: 120 };
   const xContentSpring = useSpring(xContent, springConfig);
   const yContentSpring = useSpring(yContentMouse, springConfig);
   const xBlobsSpring = useSpring(xBlobs, springConfig);
   const yBlobsSpring = useSpring(yBlobsMouse, springConfig);
 
-  const yBlobsScroll = useTransform(scrollY, [0, 1000], [0, 400]);
-  const yContentScroll = useTransform(scrollY, [0, 1000], [0, 200]);
+  const yBlobsScroll = useTransform(scrollY, [0, 1000], [0, 500]);
+  const yContentScroll = useTransform(scrollY, [0, 1000], [0, 250]);
 
   return (
     <section 
@@ -694,76 +783,109 @@ const Hero: React.FC = () => {
     >
       <CalendarModal isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} />
       
+      {/* Magic Glow Effects - MAGIA 5X */}
+      <MagicSparkles />
+      <PartyFloatingElements />
+      
       <motion.div 
         style={{ y: yBlobsScroll, x: xBlobsSpring, translateY: yBlobsSpring }} 
         className="absolute inset-0 z-0"
       >
-        <div className="absolute top-20 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-party-orange/10 rounded-full blur-[60px] md:blur-[80px] animate-pulse mix-blend-multiply" />
-        <div className="absolute bottom-0 left-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-party-yellow/20 rounded-full blur-[60px] md:blur-[100px] animate-float mix-blend-multiply" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-party-cyan/30 rounded-full blur-[100px]" />
+        <div className="absolute top-20 right-0 w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-party-orange/20 rounded-full blur-[100px] md:blur-[120px] animate-pulse mix-blend-multiply" />
+        <div className="absolute bottom-0 left-0 w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-party-yellow/30 rounded-full blur-[100px] md:blur-[140px] animate-float mix-blend-multiply" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-party-cyan/40 rounded-full blur-[150px]" />
+        
+        {/* Rotating Rays - MAGIA 5X */}
+        <motion.div 
+          animate={{ rotate: 360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2000px] h-[2000px] -z-10 opacity-10"
+        >
+          <div className="w-full h-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(147,51,234,0.3)_10deg,transparent_20deg,rgba(165,243,252,0.3)_30deg,transparent_40deg)]" />
+        </motion.div>
+
+        {/* Additional Holographic Blob - MAGIA 5X */}
+        <div className="absolute top-1/4 left-1/3 w-[300px] h-[300px] bg-party-pink/20 rounded-full blur-[100px] animate-pulse" />
       </motion.div>
       
-      <MovingClouds zIndex={5} count={40} speedMultiplier={0.7} />
+      <MovingClouds zIndex={5} count={50} speedMultiplier={0.8} />
 
       <motion.div 
         style={{ y: yContentScroll, x: xContentSpring, translateY: yContentSpring }} 
         className="max-w-6xl mx-auto w-full flex flex-col items-center relative z-10 text-center"
       >
         <div className="flex flex-col items-center relative w-full">
-            <MovingClouds zIndex={30} count={30} speedMultiplier={1.5} />
+            <MovingClouds zIndex={30} count={35} speedMultiplier={1.6} />
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 40 }}
+              initial={{ opacity: 0, scale: 0.8, y: 100 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ 
-                duration: 1.5, 
+                duration: 1.8, 
                 ease: [0.16, 1, 0.3, 1],
                 delay: 0.2
               }}
               className="w-full flex justify-center mb-4 md:mb-0 md:-mt-40 relative z-20"
             >
-              <img 
-                src="https://i.imgur.com/i1z4W2C.png" 
+              {/* Layered Magic Auras - MAGIA 5X */}
+              <motion.div
+                animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2], rotate: 360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-gradient-to-r from-party-purple/20 via-party-cyan/30 to-party-pink/20 rounded-full blur-[100px] -z-10"
+              />
+              <motion.div
+                animate={{ scale: [1.2, 0.9, 1.2], opacity: [0.3, 0.6, 0.3], rotate: -360 }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-gradient-to-br from-party-yellow/20 via-party-cyan/20 to-party-orange/20 rounded-full blur-[80px] -z-10"
+              />
+              <motion.div
+                animate={{ scale: [0.8, 1.1, 0.8], opacity: [0.4, 0.7, 0.4] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] bg-party-cyan/30 rounded-full blur-[60px] -z-10"
+              />
+              
+              <motion.img 
+                src="https://i.imgur.com/Ky6MZL1.png" 
                 alt="Mascote Ateliê Kids" 
-                className="w-[90%] md:w-[75%] lg:w-[65%] h-auto drop-shadow-2xl"
+                animate={{ 
+                  y: [0, -15, 0],
+                  rotate: [0, 2, -2, 0]
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="w-[90%] md:w-[80%] lg:w-[70%] h-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.2)] relative z-10"
               />
             </motion.div>
 
             <motion.div 
-               initial={{ opacity: 0, y: 20 }}
+               initial={{ opacity: 0, y: 40 }}
                animate={{ opacity: 1, y: 0 }}
-               transition={{ delay: 1, type: "spring" }}
-               className="relative z-40 mt-4 md:mt-0 flex flex-wrap justify-center gap-4 px-4"
+               transition={{ delay: 1.2, type: "spring", bounce: 0.5 }}
+               className="relative z-40 mt-4 md:mt-0 flex flex-wrap justify-center gap-6 px-4"
             >
                  <motion.a 
                     href="#atracoes"
-                    whileHover={{ scale: 1.1, rotate: 2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="group py-4 px-8 md:py-5 md:px-12 bg-white/90 text-gray-800 border-4 border-party-cyan rounded-full font-fredoka font-bold text-lg md:text-xl flex items-center justify-center gap-3 backdrop-blur-md shadow-[0_10px_30px_rgba(165,243,252,0.5)] hover:bg-party-cyan/20 transition-all"
+                    whileHover={{ scale: 1.15, rotate: 3, boxShadow: "0 20px 40px rgba(165,243,252,0.6)" }}
+                    whileTap={{ scale: 0.9 }}
+                    className="group py-5 px-10 md:py-6 md:px-14 bg-white/95 text-gray-800 border-4 border-party-cyan rounded-full font-fredoka font-bold text-xl md:text-2xl flex items-center justify-center gap-3 backdrop-blur-xl shadow-[0_15px_35px_rgba(165,243,252,0.4)] hover:bg-party-cyan transition-all relative overflow-hidden"
                  >
-                    <Wand2 className="text-party-orange group-hover:animate-spin-slow" size={28} /> Ver atrações
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-shine" />
+                    <Wand2 className="text-party-orange group-hover:rotate-12 transition-transform" size={32} /> Ver atrações
                  </motion.a>
 
                  <motion.button 
                     onClick={() => setIsCalendarOpen(true)}
-                    whileHover={{ scale: 1.1, rotate: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="group py-4 px-8 md:py-5 md:px-12 bg-gradient-to-r from-party-purple to-party-pink text-white rounded-full font-fredoka font-bold text-lg md:text-xl flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(147,51,234,0.4)] border-4 border-white/20"
+                    whileHover={{ scale: 1.15, rotate: -3, boxShadow: "0 20px 40px rgba(147,51,234,0.6)" }}
+                    whileTap={{ scale: 0.9 }}
+                    className="group py-5 px-10 md:py-6 md:px-14 bg-gradient-to-r from-party-purple via-party-pink to-party-orange text-white rounded-full font-fredoka font-bold text-xl md:text-2xl flex items-center justify-center gap-3 shadow-[0_15px_35px_rgba(147,51,234,0.4)] border-4 border-white/30 relative overflow-hidden"
                  >
-                    <CalendarDays size={28} /> Disponibilidade
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine" />
+                    <CalendarDays size={32} /> Disponibilidade
                  </motion.button>
             </motion.div>
-
-            <div className="md:hidden w-full max-w-xs mt-6 px-4">
-                <motion.a 
-                   href={WHATSAPP_LINK}
-                   whileHover={{ scale: 1.05 }}
-                   whileTap={{ scale: 0.95 }}
-                   className="w-full py-4 px-6 bg-[#25D366] text-white rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-3 border-2 border-white/30"
-                 >
-                    <MessageCircle size={24} /> Orçamento via WhatsApp
-                 </motion.a>
-            </div>
         </div>
       </motion.div>
     </section>
