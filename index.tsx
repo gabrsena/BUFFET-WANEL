@@ -39,7 +39,10 @@ import {
   ChevronDown,
   Waves,
   Trees,
-  Palette
+  Palette,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 // --- TYPES ---
@@ -179,6 +182,124 @@ const FAQ_DATA: FAQItemProps[] = [
 ];
 
 // --- INTERNAL COMPONENTS ---
+
+const MonthGrid: React.FC<{ year: number; month: number }> = ({ year, month }) => {
+  const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = new Date(year, month, 1).getDay();
+  
+  const isDateAvailable = (day: number) => {
+    const d = new Date(year, month, day);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    if (d < today) return false;
+    // Simulation: Weekends are mostly booked
+    if (d.getDay() === 0 || d.getDay() === 6) return (day + month) % 5 === 0;
+    return (day + month) % 3 !== 0;
+  };
+
+  return (
+    <div className="bg-slate-50 p-4 rounded-3xl border border-slate-100 h-full">
+      <h4 className="font-fredoka font-bold text-lg text-party-purple mb-4 text-center">
+        {monthNames[month]}
+      </h4>
+      <div className="grid grid-cols-7 gap-1 mb-2 text-center">
+        {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(d => (
+          <div key={d} className="text-[10px] font-bold text-slate-400">{d}</div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+          <div key={`empty-${i}`} />
+        ))}
+        {Array.from({ length: daysInMonth }).map((_, i) => {
+          const day = i + 1;
+          const available = isDateAvailable(day);
+          return (
+            <div
+              key={day}
+              className={`
+                aspect-square flex items-center justify-center rounded-lg font-bold text-[10px] md:text-xs transition-all
+                ${available 
+                  ? 'bg-party-cyan/30 text-party-purple shadow-sm' 
+                  : 'bg-white text-slate-200 border border-slate-50'}
+              `}
+            >
+              {day}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+const CalendarModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
+  const currentYear = new Date().getFullYear();
+  const months = Array.from({ length: 12 }, (_, i) => i);
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-slate-900/70 backdrop-blur-lg"
+          />
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0, y: 50 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 50 }}
+            className="relative w-full max-w-6xl max-h-[90vh] bg-white rounded-[3rem] shadow-3xl border-4 border-party-purple flex flex-col overflow-hidden"
+          >
+            {/* Header */}
+            <div className="bg-party-purple p-8 text-white text-center relative shrink-0">
+              <button onClick={onClose} className="absolute right-6 top-1/2 -translate-y-1/2 hover:rotate-90 transition-transform bg-white/20 p-2 rounded-full">
+                <X size={24} />
+              </button>
+              <div className="flex flex-col items-center">
+                <CalendarDays size={40} className="mb-2" />
+                <h3 className="text-3xl md:text-4xl font-fredoka font-bold">Agenda {currentYear}</h3>
+                <p className="text-sm md:text-base opacity-90 font-sora mt-1">Consulte a disponibilidade para o ano inteiro</p>
+              </div>
+            </div>
+
+            {/* Scrollable Body */}
+            <div className="flex-1 overflow-y-auto p-6 md:p-10 bg-white">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {months.map(m => (
+                  <MonthGrid key={m} year={currentYear} month={m} />
+                ))}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6 shrink-0">
+              <div className="flex flex-wrap items-center justify-center gap-6">
+                <div className="flex items-center gap-2 text-sm font-sora text-slate-600">
+                  <div className="w-5 h-5 bg-party-cyan/40 rounded-lg shadow-sm" /> Disponível
+                </div>
+                <div className="flex items-center gap-2 text-sm font-sora text-slate-600">
+                  <div className="w-5 h-5 bg-white border border-slate-200 rounded-lg" /> Indisponível
+                </div>
+              </div>
+              <a 
+                href={WHATSAPP_LINK}
+                target="_blank"
+                className="w-full md:w-auto px-10 py-4 bg-gradient-to-r from-party-purple via-party-pink to-party-orange text-white text-center rounded-2xl font-fredoka font-bold text-lg shadow-xl shadow-party-purple/30 hover:shadow-party-purple/50 transition-all transform hover:-translate-y-1"
+              >
+                Garantir Minha Data Agora
+              </a>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const MovingClouds: React.FC<{ zIndex: number, count?: number, speedMultiplier?: number }> = ({ zIndex, count = 5, speedMultiplier = 1 }) => {
   const clouds = Array.from({ length: count }).map((_, i) => {
@@ -538,6 +659,7 @@ const Header: React.FC = () => {
 };
 
 const Hero: React.FC = () => {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { scrollY } = useScroll();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -570,6 +692,8 @@ const Hero: React.FC = () => {
       className="pt-32 pb-20 md:pt-40 md:pb-24 px-4 min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-slate-50 perspective-1000"
       onMouseMove={handleMouseMove}
     >
+      <CalendarModal isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} />
+      
       <motion.div 
         style={{ y: yBlobsScroll, x: xBlobsSpring, translateY: yBlobsSpring }} 
         className="absolute inset-0 z-0"
@@ -609,24 +733,33 @@ const Hero: React.FC = () => {
                initial={{ opacity: 0, y: 20 }}
                animate={{ opacity: 1, y: 0 }}
                transition={{ delay: 1, type: "spring" }}
-               className="relative z-40 mt-4 md:mt-0"
+               className="relative z-40 mt-4 md:mt-0 flex flex-wrap justify-center gap-4 px-4"
             >
                  <motion.a 
                     href="#atracoes"
                     whileHover={{ scale: 1.1, rotate: 2 }}
                     whileTap={{ scale: 0.95 }}
-                    className="group py-4 px-10 md:py-5 md:px-14 bg-white/90 text-gray-800 border-4 border-party-cyan rounded-full font-fredoka font-bold text-xl md:text-2xl flex items-center justify-center gap-3 backdrop-blur-md shadow-[0_10px_30px_rgba(165,243,252,0.5)] hover:bg-party-cyan/20 transition-all"
+                    className="group py-4 px-8 md:py-5 md:px-12 bg-white/90 text-gray-800 border-4 border-party-cyan rounded-full font-fredoka font-bold text-lg md:text-xl flex items-center justify-center gap-3 backdrop-blur-md shadow-[0_10px_30px_rgba(165,243,252,0.5)] hover:bg-party-cyan/20 transition-all"
                  >
-                    <Wand2 className="text-party-orange group-hover:animate-spin-slow" size={32} /> Ver atrações
+                    <Wand2 className="text-party-orange group-hover:animate-spin-slow" size={28} /> Ver atrações
                  </motion.a>
+
+                 <motion.button 
+                    onClick={() => setIsCalendarOpen(true)}
+                    whileHover={{ scale: 1.1, rotate: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="group py-4 px-8 md:py-5 md:px-12 bg-gradient-to-r from-party-purple to-party-pink text-white rounded-full font-fredoka font-bold text-lg md:text-xl flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(147,51,234,0.4)] border-4 border-white/20"
+                 >
+                    <CalendarDays size={28} /> Disponibilidade
+                 </motion.button>
             </motion.div>
 
-            <div className="md:hidden w-full max-w-xs mt-6">
+            <div className="md:hidden w-full max-w-xs mt-6 px-4">
                 <motion.a 
                    href={WHATSAPP_LINK}
                    whileHover={{ scale: 1.05 }}
                    whileTap={{ scale: 0.95 }}
-                   className="w-full py-4 px-6 bg-gradient-to-r from-party-orange to-party-yellow text-white rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-3 border-2 border-white/30"
+                   className="w-full py-4 px-6 bg-[#25D366] text-white rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-3 border-2 border-white/30"
                  >
                     <MessageCircle size={24} /> Orçamento via WhatsApp
                  </motion.a>
