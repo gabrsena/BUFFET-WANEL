@@ -184,7 +184,6 @@ const FAQ_DATA: FAQItemProps[] = [
 // --- INTERNAL COMPONENTS ---
 
 const MagicSparkles: React.FC = () => {
-  // Aumentado para 200 partículas (5x mais)
   const sparkles = Array.from({ length: 200 }).map((_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
@@ -236,7 +235,6 @@ const PartyFloatingElements: React.FC = () => {
     const SelectedIcon = Icons[Math.floor(Math.random() * Icons.length)];
     return {
       id: i,
-      // Fix: Add SelectedIcon to the returned object so it can be accessed during rendering
       SelectedIcon,
       left: `${Math.random() * 100}%`,
       top: `${Math.random() * 100}%`,
@@ -387,57 +385,6 @@ const CalendarModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isO
   );
 };
 
-const MovingClouds: React.FC<{ zIndex: number, count?: number, speedMultiplier?: number }> = ({ zIndex, count = 5, speedMultiplier = 1 }) => {
-  const clouds = Array.from({ length: count }).map((_, i) => {
-    const isDense = Math.random() > 0.75;
-    const isVerySlow = Math.random() > 0.8;
-    return {
-      id: i,
-      top: `${Math.random() * 95}%`,
-      delay: Math.random() * 40,
-      duration: ((Math.random() * 40 + 40) / (isVerySlow ? 0.5 : 1)) / speedMultiplier,
-      size: i % 2 === 0 ? Math.random() * 160 + 120 : Math.random() * 100 + 70,
-      opacity: isDense ? Math.random() * 0.3 + 0.35 : Math.random() * 0.15 + 0.05,
-      blur: isDense ? 'blur-[2px]' : 'blur-[5px]',
-      yAmplitude: Math.random() * 30 + 10,
-      floatDelay: Math.random() * 5
-    };
-  });
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex }}>
-      {clouds.map((cloud) => (
-        <motion.div
-          key={cloud.id}
-          initial={{ x: "-40vw", opacity: 0 }}
-          animate={{ 
-            x: "120vw", 
-            opacity: [0, cloud.opacity, cloud.opacity, 0],
-            y: [0, cloud.yAmplitude, -cloud.yAmplitude, 0],
-            scale: [1, 1.05, 0.95, 1]
-          }}
-          transition={{
-            x: { duration: cloud.duration, repeat: Infinity, delay: cloud.delay, ease: "linear" },
-            opacity: { duration: cloud.duration, repeat: Infinity, delay: cloud.delay, times: [0, 0.2, 0.8, 1], ease: "linear" },
-            y: { duration: 10 + Math.random() * 10, repeat: Infinity, ease: "easeInOut", delay: cloud.floatDelay },
-            scale: { duration: 15 + Math.random() * 10, repeat: Infinity, ease: "easeInOut", delay: cloud.floatDelay }
-          }}
-          style={{ 
-            position: 'absolute', 
-            top: cloud.top,
-          }}
-        >
-          <Cloud 
-            size={cloud.size} 
-            className={`text-white fill-white filter drop-shadow-sm ${cloud.blur}`} 
-            style={{ opacity: 1 }}
-          />
-        </motion.div>
-      ))}
-    </div>
-  );
-};
-
 const GlobalBalloons: React.FC = () => {
   const { scrollYProgress } = useScroll();
   
@@ -482,7 +429,7 @@ const GlobalBalloons: React.FC = () => {
 };
 
 const ContinuousConfetti: React.FC = () => {
-  const pieces = Array.from({ length: 80 }); // Aumentado para 80 peças
+  const pieces = Array.from({ length: 80 });
   const colors = ['#9333ea', '#db2777', '#facc15', '#a5f3fc', '#ffffff', '#f97316'];
 
   return (
@@ -795,7 +742,6 @@ const Hero: React.FC = () => {
         <div className="absolute bottom-0 left-0 w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-party-yellow/30 rounded-full blur-[100px] md:blur-[140px] animate-float mix-blend-multiply" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-party-cyan/40 rounded-full blur-[150px]" />
         
-        {/* Rotating Rays - MAGIA 5X */}
         <motion.div 
           animate={{ rotate: 360 }}
           transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
@@ -804,19 +750,14 @@ const Hero: React.FC = () => {
           <div className="w-full h-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(147,51,234,0.3)_10deg,transparent_20deg,rgba(165,243,252,0.3)_30deg,transparent_40deg)]" />
         </motion.div>
 
-        {/* Additional Holographic Blob - MAGIA 5X */}
         <div className="absolute top-1/4 left-1/3 w-[300px] h-[300px] bg-party-pink/20 rounded-full blur-[100px] animate-pulse" />
       </motion.div>
       
-      <MovingClouds zIndex={5} count={50} speedMultiplier={0.8} />
-
       <motion.div 
         style={{ y: yContentScroll, x: xContentSpring, translateY: yContentSpring }} 
         className="max-w-6xl mx-auto w-full flex flex-col items-center relative z-10 text-center"
       >
         <div className="flex flex-col items-center relative w-full">
-            <MovingClouds zIndex={30} count={35} speedMultiplier={1.6} />
-
             <motion.div
               initial={{ opacity: 0, scale: 0.8, y: 100 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -827,7 +768,6 @@ const Hero: React.FC = () => {
               }}
               className="w-full flex justify-center mb-4 md:mb-0 md:-mt-40 relative z-20"
             >
-              {/* Layered Magic Auras - MAGIA 5X */}
               <motion.div
                 animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2], rotate: 360 }}
                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
