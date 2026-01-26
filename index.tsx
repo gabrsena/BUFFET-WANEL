@@ -710,16 +710,11 @@ const Hero: React.FC = () => {
 
   const xContent = useTransform(mouseX, [-1, 1], [-30, 30]);
   const yContentMouse = useTransform(mouseY, [-1, 1], [-30, 30]);
-  const xBlobs = useTransform(mouseX, [-1, 1], [50, -50]);
-  const yBlobsMouse = useTransform(mouseY, [-1, 1], [50, -50]);
 
   const springConfig = { damping: 25, stiffness: 120 };
   const xContentSpring = useSpring(xContent, springConfig);
   const yContentSpring = useSpring(yContentMouse, springConfig);
-  const xBlobsSpring = useSpring(xBlobs, springConfig);
-  const yBlobsSpring = useSpring(yBlobsMouse, springConfig);
 
-  const yBlobsScroll = useTransform(scrollY, [0, 1000], [0, 500]);
   const yContentScroll = useTransform(scrollY, [0, 1000], [0, 250]);
 
   return (
@@ -729,29 +724,6 @@ const Hero: React.FC = () => {
       onMouseMove={handleMouseMove}
     >
       <CalendarModal isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} />
-      
-      {/* Magic Glow Effects - MAGIA 5X */}
-      <MagicSparkles />
-      <PartyFloatingElements />
-      
-      <motion.div 
-        style={{ y: yBlobsScroll, x: xBlobsSpring, translateY: yBlobsSpring }} 
-        className="absolute inset-0 z-0"
-      >
-        <div className="absolute top-20 right-0 w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-party-orange/20 rounded-full blur-[100px] md:blur-[120px] animate-pulse mix-blend-multiply" />
-        <div className="absolute bottom-0 left-0 w-[400px] md:w-[800px] h-[400px] md:h-[800px] bg-party-yellow/30 rounded-full blur-[100px] md:blur-[140px] animate-float mix-blend-multiply" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-party-cyan/40 rounded-full blur-[150px]" />
-        
-        <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2000px] h-[2000px] -z-10 opacity-10"
-        >
-          <div className="w-full h-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(147,51,234,0.3)_10deg,transparent_20deg,rgba(165,243,252,0.3)_30deg,transparent_40deg)]" />
-        </motion.div>
-
-        <div className="absolute top-1/4 left-1/3 w-[300px] h-[300px] bg-party-pink/20 rounded-full blur-[100px] animate-pulse" />
-      </motion.div>
       
       <motion.div 
         style={{ y: yContentScroll, x: xContentSpring, translateY: yContentSpring }} 
@@ -768,22 +740,6 @@ const Hero: React.FC = () => {
               }}
               className="w-full flex justify-center mb-4 md:mb-0 md:-mt-40 relative z-20"
             >
-              <motion.div
-                animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2], rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-gradient-to-r from-party-purple/20 via-party-cyan/30 to-party-pink/20 rounded-full blur-[100px] -z-10"
-              />
-              <motion.div
-                animate={{ scale: [1.2, 0.9, 1.2], opacity: [0.3, 0.6, 0.3], rotate: -360 }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-gradient-to-br from-party-yellow/20 via-party-cyan/20 to-party-orange/20 rounded-full blur-[80px] -z-10"
-              />
-              <motion.div
-                animate={{ scale: [0.8, 1.1, 0.8], opacity: [0.4, 0.7, 0.4] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] bg-party-cyan/30 rounded-full blur-[60px] -z-10"
-              />
-              
               <motion.img 
                 src="https://i.imgur.com/Ky6MZL1.png" 
                 alt="Mascote Ateliê Kids" 
